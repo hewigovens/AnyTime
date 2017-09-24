@@ -1,0 +1,11 @@
+disabled_rules:
+  - line_length
+
+excluded:
+  - Carthage
+  - Pods
+  - fastlane
+  - .build
+  - AnyTime/DateTimePicker
+
+force_cast: warning
