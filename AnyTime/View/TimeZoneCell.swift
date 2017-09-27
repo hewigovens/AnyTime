@@ -51,7 +51,7 @@ class TimeZoneCell: UITableViewCell, Reusable {
             label = UILabel()
             label?.textAlignment = .right
             label?.font = UIFont.monospacedDigitSystemFont(ofSize: 16, weight: UIFont.Weight.medium)
-            self.textLabel?.font = label?.font
+            self.textLabel?.font = UIFont.monospacedDigitSystemFont(ofSize: 18, weight: UIFont.Weight.medium)
             self.accessoryView = label
         }
         return label
@@ -78,7 +78,7 @@ class TimeZoneCell: UITableViewCell, Reusable {
         let cell = self
         cell.backgroundColor = UIColor.midnightBlue()
         cell.textLabel?.textColor = UIColor.ghostWhite()
-        cell.detailTextLabel?.textColor = UIColor.ghostWhite()
+        cell.detailTextLabel?.textColor = UIColor(red:0.51, green:0.53, blue:0.56, alpha:1.00)
         cell.infoLabel?.textColor = UIColor.ghostWhite()
     }
 
@@ -86,7 +86,7 @@ class TimeZoneCell: UITableViewCell, Reusable {
         guard let timezone = self.timezone else { return }
 
         self.textLabel?.text = timezone.timezone.offset(string: timezone.abbr)
-        self.detailTextLabel?.text = timezone.title
+        self.detailTextLabel?.text = timezone.title.replacingOccurrences(of: "_", with: " ")
         self.infoLabel?.text = formatter.string(from: self.date ?? Date())
         self.infoLabel?.sizeToFit()
         self.setNeedsDisplay()

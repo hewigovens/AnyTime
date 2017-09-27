@@ -26,11 +26,15 @@ class DatePicker: UIView {
 
     public func showIn(view: UIView?, duration: TimeInterval = 1) {
         guard let view = view else { return }
+
         configureSubviews()
+        self.overlay.embedded(in: view)
+        self.overlay.frame = view.bounds
         self.fp_y = view.fp_height
         self.fp_width = view.fp_width
         view.addSubview(self)
         self.layoutIfNeeded()
+        self.overlay.layoutIfNeeded()
         UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 7, options: .curveEaseIn, animations: {
             self.snp.remakeConstraints({ make in
                 make.leading.trailing.bottom.equalToSuperview()
@@ -44,6 +48,7 @@ class DatePicker: UIView {
         UIView.animate(withDuration: 0.2, animations: ({
             self.alpha = 0
         })) { _ in
+            self.overlay.removeFromSuperview()
             self.removeFromSuperview()
         }
     }
@@ -126,6 +131,12 @@ class DatePicker: UIView {
         let view = UIStackView()
         view.axis = .vertical
         return view
+    }()
+
+    lazy var overlay: UIView = {
+        let overlay = UIView(backgroundColor: UIColor.black)
+        overlay.alpha = 0.5
+        return overlay
     }()
 
     func configureSubviews() {
