@@ -35,6 +35,7 @@
 		BB95E0651F789E5500858FD9 /* TimeZone+Offset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB95E0641F789E5500858FD9 /* TimeZone+Offset.swift */; };
 		BB95E0671F78A8E700858FD9 /* TimeZoneItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB95E0661F78A8E700858FD9 /* TimeZoneItem.swift */; };
 		BB95E0691F78B6D800858FD9 /* DispatchQueue+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB95E0681F78B6D800858FD9 /* DispatchQueue+Utils.swift */; };
+		BBC1354D1F7F76A600247325 /* GlanceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC1354C1F7F76A600247325 /* GlanceViewModel.swift */; };
 		BBE5E6051F77E83200A9F715 /* Array+Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE5E6041F77E83200A9F715 /* Array+Swap.swift */; };
 		BBE5E6071F7883E200A9F715 /* TimezonesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE5E6061F7883E200A9F715 /* TimezonesViewController.swift */; };
 		BBE5E6091F7883EE00A9F715 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBE5E6081F7883EE00A9F715 /* SettingsViewController.swift */; };
@@ -90,6 +91,7 @@
 		BB95E0641F789E5500858FD9 /* TimeZone+Offset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeZone+Offset.swift"; sourceTree = "<group>"; };
 		BB95E0661F78A8E700858FD9 /* TimeZoneItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneItem.swift; sourceTree = "<group>"; };
 		BB95E0681F78B6D800858FD9 /* DispatchQueue+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Utils.swift"; sourceTree = "<group>"; };
+		BBC1354C1F7F76A600247325 /* GlanceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceViewModel.swift; sourceTree = "<group>"; };
 		BBE5E6041F77E83200A9F715 /* Array+Swap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Swap.swift"; sourceTree = "<group>"; };
 		BBE5E6061F7883E200A9F715 /* TimezonesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezonesViewController.swift; sourceTree = "<group>"; };
 		BBE5E6081F7883EE00A9F715 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 			isa = PBXGroup;
 			children = (
 				BB1C59861F7688F000808529 /* GlanceViewController.swift */,
+				BBC1354C1F7F76A600247325 /* GlanceViewModel.swift */,
 				BBE5E6061F7883E200A9F715 /* TimezonesViewController.swift */,
 				BBE5E6081F7883EE00A9F715 /* SettingsViewController.swift */,
 				BB5678C21F7F3D68004A7361 /* DonationViewController.swift */,
@@ -533,6 +536,7 @@
 				BB5678D01F7F493D004A7361 /* UIImageViewExtension.swift in Sources */,
 				BB95E0671F78A8E700858FD9 /* TimeZoneItem.swift in Sources */,
 				BB647A611F7D3E1300C3C2D4 /* HalfModalInteractiveTransition.swift in Sources */,
+				BBC1354D1F7F76A600247325 /* GlanceViewModel.swift in Sources */,
 				BB1C59851F7688F000808529 /* AppDelegate.swift in Sources */,
 				BB647A581F7B43FD00C3C2D4 /* catchNSException.m in Sources */,
 				BB647A671F7D3F7800C3C2D4 /* AppNavController.swift in Sources */,

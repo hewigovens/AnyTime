@@ -12,14 +12,12 @@ import Colours
 import SwiftyUserDefaults
 import SnapKit
 import FontAwesomeKit
+import EventKitUI
 
 class GlanceViewController: UITableViewController {
 
     let feedback = UIImpactFeedbackGenerator(style: .light)
-    var favs = [String]()
-    var dateformat = ""
-    var timezones = [TimeZoneItem]()
-    var selectedDate: Date?
+    var viewModel: GlanceViewModel!
     weak var picker: DatePicker?
 
     //swiftlint:disable weak_delegate
@@ -29,29 +27,20 @@ class GlanceViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.favs = Defaults[.favorites]
-        self.dateformat = Defaults[.format]
+        self.viewModel = GlanceViewModel(owner: self)
         self.configureNaviItem()
-        self.configureData()
         self.configureSubviews()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.timezones.count
+        return self.viewModel.timezones.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: TimeZoneCell = tableView.dequeueReusableCell(for: indexPath)
-        if indexPath.row > self.timezones.count {
-            return cell
-        }
-        let timezone = self.timezones[indexPath.row]
-        cell.formatter.setLocalizedDateFormatFromTemplate(self.dateformat)
-        cell.date = self.selectedDate
+        guard let timezone = self.viewModel.item(at: indexPath) else { return cell }
+        cell.formatter.setLocalizedDateFormatFromTemplate(viewModel.dateformat)
+        cell.date = viewModel.selectedDate
         cell.timezone = timezone
         return cell
     }
@@ -75,8 +64,7 @@ class GlanceViewController: UITableViewController {
             return
         }
         tableView.beginUpdates()
-        self.timezones.move(at: indexPath.row, to: topIndex.row)
-        Defaults.set(.favorites, self.timezones.map { $0.abbr })
+        viewModel.move(at: indexPath, to: topIndex)
         tableView.moveRow(at: indexPath, to: topIndex)
         tableView.endUpdates()
 
@@ -104,54 +92,67 @@ class GlanceViewController: UITableViewController {
         if indexPath.row == 0 {
             return false
         }
-        if self.timezones.count < 2 {
+        if viewModel.timezones.count <= 2 {
             return false
         }
         return true
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+
+        let delete = UITableViewRowAction(style: .normal, title: "Remove ⏰") { [unowned self] (_, indexPath) in
             tableView.beginUpdates()
-            self.timezones.remove(at: indexPath.row)
-            self.favs.remove(at: indexPath.row)
-            Defaults.set(.favorites, self.favs)
+            self.viewModel.delete(at: indexPath)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             tableView.endUpdates()
         }
-    }
 
-    //swiftlint:disable block_based_kvo
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-
-        if self.presentedViewController == nil {
-            return
-        }
-
-        guard let keyPath = keyPath, let change = change else {
-            return
-        }
-
-        if keyPath == AnyTimeKey.favorites.rawValue {
-            guard let new = change[NSKeyValueChangeKey.newKey] as? [String] else {
+        let share = UITableViewRowAction(style: .normal, title: "Create 🗓") { [weak self] (_, indexPath) in
+            guard let cell = tableView.cellForRow(at: indexPath) as? TimeZoneCell else {
                 return
             }
-            if self.favs != new {
-                self.favs = new
-                self.timezones = Defaults.getFavorites()
-                self.tableView.reloadData()
+
+            let action = {
+                guard let vm = self?.viewModel else { return }
+                let vc = EKEventEditViewController()
+                let event = EKEvent(eventStore: vm.store)
+                event.notes = cell.infoLabel?.text ?? ""
+                event.startDate = vm.selectedDate
+                event.timeZone = cell.timezone?.timezone
+                vc.event = event
+                vc.editViewDelegate = self
+                self?.present(vc, animated: true, completion: nil)
             }
-        } else if keyPath == AnyTimeKey.format.rawValue {
-            guard let new = change[NSKeyValueChangeKey.newKey] as? String else {
-                return
-            }
-            if self.dateformat != new {
-                self.dateformat = new
-                self.tableView.reloadData()
+
+            if EKEventStore.authorizationStatus(for: .event) != .authorized {
+                self?.viewModel.store.requestAccess(to: .event, completion: { (_, _) in
+                    action()
+                })
+            } else {
+                action()
             }
         }
+
+        delete.backgroundColor = UIColor.strawberry()
+        share.backgroundEffect = UIBlurEffect(style: .light)
+        return [delete, share]
     }
-    //swiftlint:enable block_based_kvo
+}
+
+extension GlanceViewController: GlanceViewModelOwner {
+    var listView: UITableView {
+        return self.tableView
+    }
+
+    var visiable: Bool {
+        return self.presentedViewController == nil
+    }
+}
+
+extension GlanceViewController: EKEventEditViewDelegate {
+    func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+        controller.dismiss(animated: true, completion: nil)
+    }
 }
 
 extension GlanceViewController {
@@ -183,8 +184,8 @@ extension GlanceViewController {
         picker.timezone = timezone
         picker.selectCompletion = { [weak self] date in
             guard let ss = self else { return }
-            ss.selectedDate = date
-            for i in 0..<ss.timezones.count {
+            ss.viewModel.selectedDate = date
+            for i in 0..<ss.viewModel.timezones.count {
                 let idx = IndexPath(row: i, section: 0)
                 guard let cell = ss.tableView.cellForRow(at: idx) as? TimeZoneCell else {
                     continue
@@ -207,12 +208,6 @@ extension GlanceViewController {
         let leftIcon = FAKIonIcons.iosGearOutlineIcon(withSize: leftSize)
         rightIcon?.addAttribute(NSAttributedStringKey.foregroundColor.rawValue, value: UIColor.black)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftIcon?.image(with: CGSize(width: leftSize, height: leftSize)), style: .plain, target: self, action: #selector(showSettings))
-    }
-
-    func configureData() {
-        self.timezones = Defaults.getFavorites()
-        Defaults.addObserver(self, forKeyPath: DefaultsKeys.favorites._key, options: [.new], context: nil)
-        Defaults.addObserver(self, forKeyPath: DefaultsKeys.format._key, options: [.new], context: nil)
     }
 
     func configureSubviews() {
