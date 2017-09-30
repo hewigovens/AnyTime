@@ -159,13 +159,28 @@ extension SettingsViewController {
         item.action?()
     }
 
-    func createFooterView() -> UIView {
-        let view = UIView(backgroundColor: UIColor.clear)
+    var footerHeight: CGFloat {
 
         let height = sections.reduce(0) { (height, section) -> Int in
             return height + 24 + section.items.count * 44
         }
-        view.fp_height = self.view.fp_height - CGFloat(height) - UIApplication.shared.statusBarFrame.size.height - (self.navigationController?.navigationBar.frame.height ?? 44)
+
+        var statusBarHeight = UIApplication.shared.statusBarFrame.size.height
+        let naviBarHeight = self.navigationController?.navigationBar.frame.height ?? 0
+        if UIApplication.shared.isStatusBarHidden {
+            statusBarHeight = 0
+        }
+
+        return (UIScreen.main.bounds.size.height
+        - CGFloat(height)
+        - statusBarHeight
+        - naviBarHeight)
+    }
+
+    func createFooterView() -> UIView {
+        let view = UIView(backgroundColor: UIColor.clear)
+
+        view.fp_height = self.footerHeight
 
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Dev"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "9999"
