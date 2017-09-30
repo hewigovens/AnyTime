@@ -119,6 +119,8 @@ class GlanceViewController: UITableViewController {
                 event.notes = cell.infoLabel?.text ?? ""
                 event.startDate = vm.selectedDate
                 event.timeZone = cell.timezone?.timezone
+                event.calendar = vm.store.defaultCalendarForNewEvents
+                vc.eventStore = vm.store
                 vc.event = event
                 vc.editViewDelegate = self
                 self?.present(vc, animated: true, completion: nil)
@@ -151,7 +153,16 @@ extension GlanceViewController: GlanceViewModelOwner {
 
 extension GlanceViewController: EKEventEditViewDelegate {
     func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
-        controller.dismiss(animated: true, completion: nil)
+        do {
+            try viewModel.store.commit()
+            controller.dismiss(animated: true, completion: nil)
+        } catch let error {
+            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = self.view.bounds
+            self.present(alert, animated: true, completion: nil)
+        }
     }
 }
 

@@ -41,6 +41,13 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
         updateFormatIfNeeded()
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: nil) { _ in
+            self.tableView.tableFooterView = self.createFooterView()
+        }
+    }
+
     func updateFormatIfNeeded() {
         if sections[0].items[0].value != Defaults[.format] {
             sections[0].items[0].value = Defaults[.format]
@@ -158,7 +165,7 @@ extension SettingsViewController {
         let height = sections.reduce(0) { (height, section) -> Int in
             return height + 24 + section.items.count * 44
         }
-        view.fp_height = self.view.fp_height - CGFloat(height) - 64
+        view.fp_height = self.view.fp_height - CGFloat(height) - UIApplication.shared.statusBarFrame.size.height - (self.navigationController?.navigationBar.frame.height ?? 44)
 
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Dev"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "9999"
