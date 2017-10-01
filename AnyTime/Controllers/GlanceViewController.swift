@@ -118,6 +118,7 @@ class GlanceViewController: UITableViewController {
                 let event = EKEvent(eventStore: vm.store)
                 event.notes = cell.infoLabel?.text ?? ""
                 event.startDate = vm.selectedDate
+                event.endDate = vm.selectedDate?.addingTimeInterval(3600)
                 event.timeZone = cell.timezone?.timezone
                 event.calendar = vm.store.defaultCalendarForNewEvents
                 vc.eventStore = vm.store

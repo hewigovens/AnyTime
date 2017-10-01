@@ -696,7 +696,7 @@
 				DEVELOPMENT_TEAM = FH9QG7ZJR9;
 				INFOPLIST_FILE = AnyTime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.AnyTime;
+				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.anytime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "AnyTime/AnyTime-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -715,7 +715,7 @@
 				DEVELOPMENT_TEAM = FH9QG7ZJR9;
 				INFOPLIST_FILE = AnyTime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.AnyTime;
+				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.anytime;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "AnyTime/AnyTime-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
