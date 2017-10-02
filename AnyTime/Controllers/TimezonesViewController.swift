@@ -18,8 +18,22 @@ let timezonesCellId = "TimezonesCell"
 class TimezonesViewController: UIViewController, HalfModalPresentable {
 
     var data = [(prefix: String, items: [TimeZoneItem])]()
-    var set = Set<TimeZoneItem>(Defaults.getFavorites())
+    var set = Set<TimeZoneItem>()
     weak var banner: NotificationBanner?
+
+    lazy var searchView: UIView = {
+        let search = UIView()
+        search.fp_height = 50
+        let textField = UITextField()
+        let icon = FAKIonIcons.image(with: "ion-ios-search", size: 20)
+        textField.leftView = UIImageView(image: icon)
+        textField.leftViewMode = .always
+        textField.clearButtonMode = .always
+        textField.placeholder = "Tap to search..."
+        textField.returnKeyType = .search
+        textField.embedded(in: search)
+        return search
+    }()
 
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: CGRect.zero, style: .plain)
@@ -39,18 +53,20 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
     }
 
     func configureData() {
-        let items = TimeZone.abbreviationDictionary.map { TimeZoneItem(abbr: $0.key, title: $0.value, timezone: TimeZone(abbreviation: $0.key)!)
-        }
+        let items = TimeZoneItem.get(ids: TimeZone.knownTimeZoneIdentifiers)
+        let fav = TimeZoneItem.get(ids: Defaults[.favorites])
         let predicate = { (item: TimeZoneItem) -> String in
             if item.title == "UTC" || item.title == "GMT" {
                 return "N/A"
             }
-            let array = item.title.split(separator: "/")
-            if array.count > 0 {
-                return String(array[0])
+            let area = item.area
+            var header = area.continent
+            if area.country.length > 0 {
+                header.append("/\(area.country)")
             }
-            return item.title
+            return header
         }
+        self.set = Set<TimeZoneItem>(fav)
         self.data = Dictionary.init(grouping: items, by: predicate).map { return ($0.key, $0.value) }
     }
 
@@ -64,11 +80,8 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
 
     func configureSubviews() {
         self.view.backgroundColor = .clear
-        self.view.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview()
-            make.top.equalToSuperview().offset(0)
-        }
+        tableView.embedded(in: self.view)
+//        tableView.tableHeaderView = self.searchView
     }
 
     @objc func maximize() {
@@ -84,7 +97,7 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
             return false
         } else {
             var favs = Defaults[.favorites]
-            favs.append(item.abbr)
+            favs.append(item.timezone.identifier)
             Defaults.set(.favorites, favs)
             Defaults.synchronize()
             set.insert(item)

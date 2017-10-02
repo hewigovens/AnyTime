@@ -86,10 +86,10 @@ class FormatEditorViewController: UIViewController, HalfModalPresentable {
 
     func persistFormat() {
         guard let text = self.previewLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines),
-            text.lengthOfBytes(using: .utf8) > 0 else {
+            text.length > 0 else {
             return
         }
-        guard let format = self.input.text, format.lengthOfBytes(using: .utf8) > 0 else {
+        guard let format = self.input.text, format.length > 0 else {
             return
         }
         Defaults.set(.format, format)

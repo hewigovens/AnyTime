@@ -11,13 +11,21 @@ import Colours
 import Reusable
 import SwiftyUserDefaults
 
+struct Area {
+    let continent: String
+    let country: String
+    let city: String
+}
+
 extension TimeZoneItem {
-    var area: (continent: String, city: String) {
-        let array = self.title.split(separator: "/")
-        if array.count < 2 {
-            return (String(array[0]), String(array[0]))
+    var area: Area {
+        let array = self.title.split(separator: "/").map {$0.replacingOccurrences(of: "_", with: " ")}
+        if array.count > 2 {
+            return Area(continent: String(array[0]), country: String(array[1]), city: String(array[2]))
+        } else if array.count == 2 {
+            return Area(continent: String(array[0]), country: "", city: String(array[1]))
         }
-        return (String(array[0]), String(array[1]).replacingOccurrences(of: "_", with: " "))
+        return Area(continent: String(array[0]), country: String(array[0]), city: String(array[0]))
     }
 }
 

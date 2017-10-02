@@ -139,7 +139,7 @@ extension SettingsViewController {
         cell.textLabel?.font = UIFont.systemFont(ofSize: 15)
         cell.textLabel?.textColor = UIColor.black25Percent()
         cell.imageView?.image = item.icon
-        if item.value.lengthOfBytes(using: .utf8) > 0 {
+        if item.value.length > 0 {
             var label = cell.accessoryView as? UILabel
             if label == nil {
                 label = UILabel()

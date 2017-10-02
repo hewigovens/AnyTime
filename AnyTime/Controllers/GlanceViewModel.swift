@@ -38,7 +38,7 @@ class GlanceViewModel: NSObject {
     func finishInit() {
         self.favs = Defaults[.favorites]
         self.dateformat = Defaults[.format]
-        self.timezones = Defaults.getFavorites()
+        self.timezones = TimeZoneItem.get(ids: favs)
 
         Defaults.addObserver(self, forKeyPath: DefaultsKeys.favorites._key, options: [.new], context: nil)
         Defaults.addObserver(self, forKeyPath: DefaultsKeys.format._key, options: [.new], context: nil)
@@ -60,7 +60,7 @@ class GlanceViewModel: NSObject {
     func move(at indexPath: IndexPath, to: IndexPath) {
     //swiftlint:enable identifier_name
         timezones.move(at: indexPath.row, to: to.row)
-        Defaults.set(.favorites, timezones.map { $0.abbr })
+        Defaults.set(.favorites, timezones.map { $0.timezone.identifier })
     }
 
     func delete(at indexPath: IndexPath) {
@@ -86,7 +86,7 @@ class GlanceViewModel: NSObject {
             }
             if self.favs != new {
                 self.favs = new
-                self.timezones = Defaults.getFavorites()
+                self.timezones = TimeZoneItem.get(ids: Defaults[.favorites])
                 owner?.listView.reloadData()
             }
         } else if keyPath == AnyTimeKey.format.rawValue {

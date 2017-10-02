@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		22DEC68C9599669BB0886F43 /* Pods_AnyTimeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93776C7A6C2C5441B909D6BD /* Pods_AnyTimeTests.framework */; };
+		BB1716D31F82197000E7460D /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1716D21F82197000E7460D /* String+Utils.swift */; };
 		BB1C59851F7688F000808529 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1C59841F7688F000808529 /* AppDelegate.swift */; };
 		BB1C59871F7688F000808529 /* GlanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1C59861F7688F000808529 /* GlanceViewController.swift */; };
 		BB1C598C1F7688F000808529 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB1C598B1F7688F000808529 /* Assets.xcassets */; };
@@ -58,6 +59,7 @@
 		50AA5C52977D285E3C95380F /* Pods-AnyTimeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnyTimeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AnyTimeTests/Pods-AnyTimeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		60E57975B65C320023AD224F /* Pods_AnyTime.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnyTime.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93776C7A6C2C5441B909D6BD /* Pods_AnyTimeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnyTimeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB1716D21F82197000E7460D /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		BB1C59811F7688F000808529 /* AnyTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnyTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB1C59841F7688F000808529 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BB1C59861F7688F000808529 /* GlanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceViewController.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 				BB5BBA1A1F7755B500C87688 /* UIView+Frame.swift */,
 				BB95E0641F789E5500858FD9 /* TimeZone+Offset.swift */,
 				BB95E0681F78B6D800858FD9 /* DispatchQueue+Utils.swift */,
+				BB1716D21F82197000E7460D /* String+Utils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -542,6 +545,7 @@
 				BB647A671F7D3F7800C3C2D4 /* AppNavController.swift in Sources */,
 				BB647A641F7D3E1300C3C2D4 /* HalfModalPresentationController.swift in Sources */,
 				BB647A621F7D3E1300C3C2D4 /* HalfModalTransitionAnimator.swift in Sources */,
+				BB1716D31F82197000E7460D /* String+Utils.swift in Sources */,
 				BB5678D31F7F493D004A7361 /* QRCode.swift in Sources */,
 				BB5678D11F7F493D004A7361 /* CIImageExtension.swift in Sources */,
 				BB3A1DCF1F7A0CE400F793F8 /* DatePicker.swift in Sources */,

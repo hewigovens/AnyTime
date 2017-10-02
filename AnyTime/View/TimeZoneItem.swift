@@ -20,7 +20,7 @@ extension TimeZoneItem: Equatable, Hashable {
     }
 
     public var hashValue: Int {
-        return combineHashes([abbr.hashValue, timezone.hashValue])
+        return timezone.hashValue
     }
 }
 
