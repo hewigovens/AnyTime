@@ -94,8 +94,14 @@ class TimeZoneCell: UITableViewCell, Reusable {
     func displayDate() {
         guard let timezone = self.timezone else { return }
 
-        self.textLabel?.text = timezone.timezone.offset(string: timezone.abbr)
-        self.detailTextLabel?.text = timezone.title.replacingOccurrences(of: "_", with: " ")
+        var text = timezone.timezone.offset(string: timezone.abbr)
+        var detail = timezone.title.replacingOccurrences(of: "_", with: " ")
+        if Defaults[.preferCity] == 1 {
+            swap(&text, &detail)
+            text = timezone.area.city
+        }
+        self.textLabel?.text = text
+        self.detailTextLabel?.text = detail
         self.textLabel?.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
         self.infoLabel?.text = formatter.string(from: self.date ?? Date())
         self.infoLabel?.sizeToFit()

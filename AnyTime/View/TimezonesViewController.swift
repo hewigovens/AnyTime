@@ -65,8 +65,7 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
         label.sizeToFit()
         label.textColor = UIColor.black25Percent()
         label.embedded(in: view, make: { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(view).offset(200)
+            make.center.equalToSuperview()
         })
         view.isHidden = true
         return view
@@ -93,7 +92,11 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
         tableView.tableHeaderView = self.searchView
         tableView.setContentOffset(CGPoint(x: 0, y: 50), animated: false)
 
-        self.empty.embedded(in: self.view)
+        self.empty.embedded(in: self.view, make: {
+            $0.centerY.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.top.equalTo(self.view).offset(200)
+        })
     }
 
     @objc func maximize() {

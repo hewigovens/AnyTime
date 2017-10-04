@@ -41,12 +41,25 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
         }
     }
 
-    func configureData() {
+    var preferDisplay: String {
+        return Defaults[.preferCity] == 1 ? "City" : "Abbr"
+    }
 
+    func configureData() {
         sections.append(SettingSection(title: "Format", items: [
             SettingItem(title: "Format", value: Defaults[.format], icon: FAKIonIcons.image(with: "ion-ios-clock-outline"), action: { [weak self] in
                 let editor = FormatEditorViewController()
                 self?.navigationController?.pushViewController(editor, animated: true)
+            }),
+            SettingItem(title: "Prefer", value: self.preferDisplay, icon: FAKIonIcons.image(with: "ion-ios-toggle-outline"), action: { [weak self] in
+                if Defaults[.preferCity] == 0 {
+                    Defaults.set(.preferCity, 1)
+                } else {
+                    Defaults.set(.preferCity, 0)
+                }
+                Defaults.synchronize()
+                self?.sections[0].items[1].value = (self?.preferDisplay)!
+                self?.tableView.reloadRows(at: [IndexPath(row: 1, section:0)], with: .automatic)
             })
         ]))
 

@@ -40,13 +40,15 @@ class GlanceViewModel: NSObject {
         self.dateformat = Defaults[.format]
         self.timezones = TimeZoneItem.get(ids: favs)
 
-        Defaults.addObserver(self, forKeyPath: DefaultsKeys.favorites._key, options: [.new], context: nil)
-        Defaults.addObserver(self, forKeyPath: DefaultsKeys.format._key, options: [.new], context: nil)
+        for key in AnyTimeKey.all() {
+            Defaults.addObserver(self, forKeyPath: key, options: [.new], context: nil)
+        }
     }
 
     deinit {
-        Defaults.removeObserver(self, forKeyPath: DefaultsKeys.favorites._key)
-        Defaults.removeObserver(self, forKeyPath: DefaultsKeys.format._key)
+        for key in AnyTimeKey.all() {
+            Defaults.removeObserver(self, forKeyPath: key)
+        }
     }
 
     func item(at indexPath: IndexPath) -> TimeZoneItem? {
@@ -97,6 +99,8 @@ class GlanceViewModel: NSObject {
                 self.dateformat = new
                 owner?.listView.reloadData()
             }
+        } else if keyPath == AnyTimeKey.preferCity.rawValue {
+            owner?.listView.reloadData()
         }
     }
     //swiftlint:enable block_based_kvo

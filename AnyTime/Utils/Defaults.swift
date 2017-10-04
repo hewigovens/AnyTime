@@ -19,18 +19,28 @@ public func registerDefaults() {
         "America/Los_Angeles",
         "America/Chicago"
     ],
-        "format": "HH:mm MMM d yyyy"
+        "format": "HH:mm MMM d yyyy",
+        "prefer_city": 0
     ])
 }
 
 enum AnyTimeKey: String {
     case favorites
     case format
+    case preferCity = "prefer_city"
+}
+
+extension AnyTimeKey {
+    static func all() -> [String] {
+        let all: [AnyTimeKey] = [.favorites, .format, .preferCity]
+        return all.map {$0.rawValue}
+    }
 }
 
 extension DefaultsKeys {
     static let favorites = DefaultsKey<[String]>(AnyTimeKey.favorites.rawValue)
     static let format = DefaultsKey<String>(AnyTimeKey.format.rawValue)
+    static let preferCity = DefaultsKey<Int>(AnyTimeKey.preferCity.rawValue)
 }
 
 extension TimeZoneItem {
