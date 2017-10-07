@@ -262,17 +262,21 @@ extension GlanceViewController {
         picker.timezone = timezone
         picker.selectCompletion = { [weak self] date in
             guard let ss = self else { return }
-            ss.viewModel.selectedDate = date
-            for i in 0..<ss.viewModel.timezones.count {
-                let idx = IndexPath(row: i, section: 0)
-                guard let cell = ss.tableView.cellForRow(at: idx) as? TimeZoneCell else {
-                    continue
-                }
-                cell.date = date
-            }
+            ss.update(date: date)
         }
         picker.showIn(view: self.navigationController?.view, duration: 0.7)
         self.picker = picker
+    }
+
+    func update(date: Date) {
+        viewModel.selectedDate = date
+        for i in 0..<viewModel.timezones.count {
+            let idx = IndexPath(row: i, section: 0)
+            guard let cell = tableView.cellForRow(at: idx) as? TimeZoneCell else {
+                continue
+            }
+            cell.date = date
+        }
     }
 
     func configureNaviItem() {

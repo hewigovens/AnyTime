@@ -26,6 +26,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        guard let nav = self.window?.rootViewController as? UINavigationController,
+            let vc = nav.topViewController as? GlanceViewController else { return }
+        vc.update(date: Date())
+    }
+
     func setupAppearance() {
         UINavigationBar.appearance().barTintColor = UIColor.white
         UINavigationBar.appearance().tintColor = UIColor.midnightBlue()
