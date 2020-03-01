@@ -1,5 +1,8 @@
 platform :ios, '13'
+
+inhibit_all_warnings!
 install! 'cocoapods', :generate_multiple_pod_projects => true
+
 target 'AnyTime' do
   use_frameworks! :linkage => :static
 

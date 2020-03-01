@@ -14,7 +14,12 @@ struct TimeZoneItem: Equatable, Hashable {
     let timezone: TimeZone
 }
 
-extension TimeZoneItem {
+extension TimeZoneItem: CustomStringConvertible {
+
+    var description: String {
+        return String(format: "%@: %@", title, abbr)
+    }
+
     var area: Area {
         let array: [String] = self.title.split(separator: "/").map {$0.replacingOccurrences(of: "_", with: " ")}
         if array.count > 2 {

@@ -135,15 +135,15 @@ extension SettingsViewController {
         let height = sections.reduce(0) { (height, section) -> Int in
             return height + 24 + section.items.count * 44
         }
+        let barManager = view?.window?.windowScene?.statusBarManager
 
-        var statusBarHeight = UIApplication.shared.statusBarFrame.size.height
+        var statusBarHeight = barManager?.statusBarFrame.height ?? 0
         let naviBarHeight = self.navigationController?.navigationBar.frame.height ?? 0
-        if UIApplication.shared.isStatusBarHidden {
+        if barManager?.isStatusBarHidden ?? false {
             statusBarHeight = 0
         }
 
-        return (UIScreen.main.bounds.size.height
-        - CGFloat(height) - statusBarHeight - naviBarHeight)
+        return (UIScreen.main.bounds.size.height - CGFloat(height) - statusBarHeight - naviBarHeight)
     }
 
     func createFooterView() -> UIView {

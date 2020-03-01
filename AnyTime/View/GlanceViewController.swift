@@ -96,47 +96,47 @@ class GlanceViewController: UITableViewController {
         return true
     }
 
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-
-        let delete = UITableViewRowAction(style: .normal, title: "Remove ⏰") { [unowned self] (_, indexPath) in
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteItem = UIContextualAction(style: .normal, title: "Remove ⏰") {  (_, _, _) in
             tableView.beginUpdates()
             self.viewModel.delete(at: indexPath)
             tableView.deleteRows(at: [indexPath], with: .automatic)
             tableView.endUpdates()
         }
+        deleteItem.backgroundColor = UIColor.strawberry()
 
-        let share = UITableViewRowAction(style: .normal, title: "Create 🗓") { [weak self] (_, indexPath) in
+        let shareItem = UIContextualAction(style: .normal, title: "Create 🗓") {  (_, _, _) in
             guard let cell = tableView.cellForRow(at: indexPath) as? TimeZoneCell else {
                 return
             }
 
-            let action = {
-                guard let viewModel = self?.viewModel else { return }
-                let viewController = EKEventEditViewController()
-                let event = EKEvent(eventStore: viewModel.store)
-                event.notes = "\(cell.infoLabel?.text ?? "") \(cell.timezone?.timezone.abbreviation() ?? "")"
-                event.startDate = viewModel.selectedDate
-                event.endDate = viewModel.selectedDate?.addingTimeInterval(3600)
-                event.timeZone = cell.timezone?.timezone
-                event.calendar = viewModel.store.defaultCalendarForNewEvents
-                viewController.eventStore = viewModel.store
-                viewController.event = event
-                viewController.editViewDelegate = self
-                self?.present(viewController, animated: true, completion: nil)
-            }
+            DispatchQueue.main.async {
+                let action = {
+                    guard let viewModel = self.viewModel else { return }
+                    let viewController = EKEventEditViewController()
+                    let event = EKEvent(eventStore: viewModel.store)
+                    event.notes = "\(cell.infoLabel?.text ?? "") \(cell.timezone?.timezone.abbreviation() ?? "")"
+                    event.startDate = viewModel.selectedDate
+                    event.endDate = viewModel.selectedDate?.addingTimeInterval(3600)
+                    event.timeZone = cell.timezone?.timezone
+                    event.calendar = viewModel.store.defaultCalendarForNewEvents
+                    viewController.eventStore = viewModel.store
+                    viewController.event = event
+                    viewController.editViewDelegate = self
+                    self.present(viewController, animated: true, completion: nil)
+                }
 
-            if EKEventStore.authorizationStatus(for: .event) != .authorized {
-                self?.viewModel.store.requestAccess(to: .event, completion: { (_, _) in
+                if EKEventStore.authorizationStatus(for: .event) != .authorized {
+                    self.viewModel.store.requestAccess(to: .event, completion: { (_, _) in
+                        action()
+                    })
+                } else {
                     action()
-                })
-            } else {
-                action()
+                }
             }
         }
 
-        delete.backgroundColor = UIColor.strawberry()
-        share.backgroundEffect = UIBlurEffect(style: .light)
-        return [delete, share]
+        return UISwipeActionsConfiguration(actions: [deleteItem, shareItem])
     }
 }
 
