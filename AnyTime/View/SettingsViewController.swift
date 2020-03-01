@@ -11,7 +11,7 @@ import FontAwesomeKit
 import SwiftyUserDefaults
 import StoreKit
 
-class SettingsViewController: UITableViewController, HalfModalPresentable {
+class SettingsViewController: UITableViewController {
 
     var sections = [SettingSection]()
 
@@ -35,29 +35,28 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
     }
 
     func updateFormatIfNeeded() {
-        if sections[0].items[0].value != Defaults[.format] {
-            sections[0].items[0].value = Defaults[.format]
+        if sections[0].items[0].value != Defaults.format {
+            sections[0].items[0].value = Defaults.format
             tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
         }
     }
 
     var preferDisplay: String {
-        return Defaults[.preferCity] == 1 ? "City" : "Abbr"
+        return Defaults.preferCity == 1 ? "City" : "Abbr"
     }
 
     func configureData() {
         sections.append(SettingSection(title: "Format", items: [
-            SettingItem(title: "Format", value: Defaults[.format], icon: FAKIonIcons.image(with: "ion-ios-clock-outline"), action: { [weak self] in
+            SettingItem(title: "Format", value: Defaults.format, icon: FAKIonIcons.image(with: "ion-ios-clock-outline"), action: { [weak self] in
                 let editor = FormatEditorViewController()
                 self?.navigationController?.pushViewController(editor, animated: true)
             }),
             SettingItem(title: "Prefer", value: self.preferDisplay, icon: FAKIonIcons.image(with: "ion-ios-toggle-outline"), action: { [weak self] in
-                if Defaults[.preferCity] == 0 {
-                    Defaults.set(.preferCity, 1)
+                if Defaults.preferCity == 0 {
+                    Defaults.preferCity = 1
                 } else {
-                    Defaults.set(.preferCity, 0)
+                    Defaults.preferCity = 0
                 }
-                Defaults.synchronize()
                 self?.sections[0].items[1].value = (self?.preferDisplay)!
                 self?.tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
             })
@@ -75,7 +74,6 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
                 }
             }),
             SettingItem(title: "About", value: "", icon: FAKIonIcons.image(with: "ion-ios-information-outline"), action: { [weak self] in
-                self?.maximize()
                 self?.tableView.setContentOffset(CGPoint(x: 0, y: 64), animated: true)
             })
         ]))
@@ -85,8 +83,6 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
         self.title = "Settings"
         let image = FAKIonIcons.image(with: "ion-ios-close-empty", size: 30)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(close))
-        let upImage = FAKIonIcons.image(with: "ion-ios-arrow-up", size: 24)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: upImage, style: .plain, target: self, action: #selector(maximize))
     }
 
     func configureSubviews() {
@@ -97,10 +93,6 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
 
     @objc func close() {
         self.navigationController?.dismiss(animated: true, completion: nil)
-    }
-
-    @objc func maximize() {
-        self.maximizeToFullScreen()
     }
 }
 

@@ -15,7 +15,7 @@ import NotificationBannerSwift
 
 let timezonesCellId = "TimezonesCell"
 
-class TimezonesViewController: UIViewController, HalfModalPresentable {
+class TimezonesViewController: UIViewController {
 
     lazy var viewModel: TimezonesViewModel = {
         let vModel = TimezonesViewModel()
@@ -82,8 +82,6 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
         self.title = "Timezones"
         let image = FAKIonIcons.image(with: "ion-ios-close-empty", size: 30)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(close))
-        let upImage = FAKIonIcons.image(with: "ion-ios-arrow-up", size: 24)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: upImage, style: .plain, target: self, action: #selector(maximize))
     }
 
     func configureSubviews() {
@@ -97,10 +95,6 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
             $0.width.equalToSuperview()
             $0.top.equalTo(self.view).offset(200)
         })
-    }
-
-    @objc func maximize() {
-        self.maximizeToFullScreen()
     }
 
     @objc func search(_ textField: UITextField) {

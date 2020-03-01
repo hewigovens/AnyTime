@@ -22,10 +22,6 @@ class GlanceViewController: UITableViewController {
     var dragInitialIndexPath: IndexPath?
     var dragCellSnapshot: UIView?
 
-    //swiftlint:disable weak_delegate
-    var halfModalTransitioningDelegate: HalfModalTransitioningDelegate?
-    //swiftlint:enable weak_delegate
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -173,18 +169,12 @@ extension GlanceViewController {
     @objc func addTimezone() {
         let timezonesVC = TimezonesViewController()
         let nav = UINavigationController(rootViewController: timezonesVC)
-        self.halfModalTransitioningDelegate = HalfModalTransitioningDelegate(viewController: self, presentingViewController: nav)
-        nav.modalPresentationStyle = .custom
-        nav.transitioningDelegate = self.halfModalTransitioningDelegate
         self.present(nav, animated: true, completion: nil)
     }
 
     @objc func showSettings() {
         let settingsVC = SettingsViewController(style: .plain)
         let nav = UINavigationController(rootViewController: settingsVC)
-        self.halfModalTransitioningDelegate = HalfModalTransitioningDelegate(viewController: self, presentingViewController: nav)
-        nav.modalPresentationStyle = .custom
-        nav.transitioningDelegate = self.halfModalTransitioningDelegate
         self.present(nav, animated: true, completion: nil)
     }
 

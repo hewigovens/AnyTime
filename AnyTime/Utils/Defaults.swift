@@ -9,21 +9,6 @@
 import Foundation
 import SwiftyUserDefaults
 
-public func registerDefaults() {
-    UserDefaults.standard.register(defaults: [
-        "favorites": [
-        "GMT",
-        "Asia/Shanghai",
-        "Asia/Tokyo",
-        "America/New_York",
-        "America/Los_Angeles",
-        "America/Chicago"
-    ],
-        "format": "HH:mm MMM d yyyy",
-        "prefer_city": 0
-    ])
-}
-
 enum AnyTimeKey: String {
     case favorites
     case format
@@ -39,7 +24,14 @@ extension AnyTimeKey {
 
 extension DefaultsKeys {
     var favorites: DefaultsKey<[String]> {
-        .init(AnyTimeKey.favorites.rawValue, defaultValue: [])
+        .init(AnyTimeKey.favorites.rawValue, defaultValue: [
+            "GMT",
+            "Asia/Shanghai",
+            "Asia/Tokyo",
+            "America/New_York",
+            "America/Los_Angeles",
+            "America/Chicago"
+        ])
     }
     var format: DefaultsKey<String> {
         .init(AnyTimeKey.format.rawValue, defaultValue: "HH:mm MMM d yyyy")

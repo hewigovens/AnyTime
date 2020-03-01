@@ -11,31 +11,13 @@ import Colours
 import Reusable
 import SwiftyUserDefaults
 
-struct Area {
-    let continent: String
-    let country: String
-    let city: String
-}
-
-extension TimeZoneItem {
-    var area: Area {
-        let array: [String] = self.title.split(separator: "/").map {$0.replacingOccurrences(of: "_", with: " ")}
-        if array.count > 2 {
-            return Area(continent: String(array[0]), country: String(array[1]), city: String(array[2]))
-        } else if array.count == 2 {
-            return Area(continent: String(array[0]), country: "", city: String(array[1]))
-        }
-        return Area(continent: String(array[0]), country: String(array[0]), city: String(array[0]))
-    }
-}
-
 class TimeZoneCell: UITableViewCell, Reusable {
     static let reuseId = "TimeZoneCell"
 
     lazy var formatter: DateFormatter = {
         let dateformatter = DateFormatter()
         dateformatter.locale = Locale.current
-        dateformatter.setLocalizedDateFormatFromTemplate(Defaults[.format])
+        dateformatter.setLocalizedDateFormatFromTemplate(Defaults.format)
         return dateformatter
     }()
 
@@ -96,7 +78,7 @@ class TimeZoneCell: UITableViewCell, Reusable {
 
         var text = timezone.timezone.offset(string: timezone.abbr)
         var detail = timezone.title.replacingOccurrences(of: "_", with: " ")
-        if Defaults[.preferCity] == 1 {
+        if Defaults.preferCity == 1 {
             swap(&text, &detail)
             text = timezone.area.city
         }

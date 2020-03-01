@@ -25,12 +25,8 @@
 		BB5BBA1D1F778F4100C87688 /* TimeZoneCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB5BBA1C1F778F4100C87688 /* TimeZoneCell.swift */; };
 		BB647A541F7B2D3800C3C2D4 /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB647A531F7B2D3800C3C2D4 /* UIView+Utils.swift */; };
 		BB647A581F7B43FD00C3C2D4 /* catchNSException.m in Sources */ = {isa = PBXBuildFile; fileRef = BB647A571F7B43FD00C3C2D4 /* catchNSException.m */; };
-		BB647A611F7D3E1300C3C2D4 /* HalfModalInteractiveTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB647A5C1F7D3E1300C3C2D4 /* HalfModalInteractiveTransition.swift */; };
-		BB647A621F7D3E1300C3C2D4 /* HalfModalTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB647A5D1F7D3E1300C3C2D4 /* HalfModalTransitionAnimator.swift */; };
-		BB647A631F7D3E1300C3C2D4 /* HalfModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB647A5E1F7D3E1300C3C2D4 /* HalfModalTransitioningDelegate.swift */; };
-		BB647A641F7D3E1300C3C2D4 /* HalfModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB647A601F7D3E1300C3C2D4 /* HalfModalPresentationController.swift */; };
-		BB647A671F7D3F7800C3C2D4 /* AppNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB647A661F7D3F7800C3C2D4 /* AppNavController.swift */; };
 		BB647A691F7D45A300C3C2D4 /* FAK+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB647A681F7D45A300C3C2D4 /* FAK+Utils.swift */; };
+		BB86B307240BA3A900349651 /* Area.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB86B306240BA3A900349651 /* Area.swift */; };
 		BB95E0651F789E5500858FD9 /* TimeZone+Offset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB95E0641F789E5500858FD9 /* TimeZone+Offset.swift */; };
 		BB95E0671F78A8E700858FD9 /* TimeZoneItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB95E0661F78A8E700858FD9 /* TimeZoneItem.swift */; };
 		BB95E0691F78B6D800858FD9 /* DispatchQueue+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB95E0681F78B6D800858FD9 /* DispatchQueue+Utils.swift */; };
@@ -80,12 +76,8 @@
 		BB647A551F7B43FC00C3C2D4 /* AnyTime-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AnyTime-Bridging-Header.h"; sourceTree = "<group>"; };
 		BB647A561F7B43FD00C3C2D4 /* catchNSException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = catchNSException.h; sourceTree = "<group>"; };
 		BB647A571F7B43FD00C3C2D4 /* catchNSException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = catchNSException.m; sourceTree = "<group>"; };
-		BB647A5C1F7D3E1300C3C2D4 /* HalfModalInteractiveTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalInteractiveTransition.swift; sourceTree = "<group>"; };
-		BB647A5D1F7D3E1300C3C2D4 /* HalfModalTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalTransitionAnimator.swift; sourceTree = "<group>"; };
-		BB647A5E1F7D3E1300C3C2D4 /* HalfModalTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalTransitioningDelegate.swift; sourceTree = "<group>"; };
-		BB647A601F7D3E1300C3C2D4 /* HalfModalPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfModalPresentationController.swift; sourceTree = "<group>"; };
-		BB647A661F7D3F7800C3C2D4 /* AppNavController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppNavController.swift; sourceTree = "<group>"; };
 		BB647A681F7D45A300C3C2D4 /* FAK+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FAK+Utils.swift"; sourceTree = "<group>"; };
+		BB86B306240BA3A900349651 /* Area.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Area.swift; sourceTree = "<group>"; };
 		BB95E0641F789E5500858FD9 /* TimeZone+Offset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeZone+Offset.swift"; sourceTree = "<group>"; };
 		BB95E0661F78A8E700858FD9 /* TimeZoneItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneItem.swift; sourceTree = "<group>"; };
 		BB95E0681F78B6D800858FD9 /* DispatchQueue+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Utils.swift"; sourceTree = "<group>"; };
@@ -134,7 +126,6 @@
 				E96F4C821C290FB8699F531F /* Pods-AnyTimeTests.debug.xcconfig */,
 				A956BBEBCB83CCD6812106BF /* Pods-AnyTimeTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -144,6 +135,7 @@
 				BB95E0661F78A8E700858FD9 /* TimeZoneItem.swift */,
 				BB95E0641F789E5500858FD9 /* TimeZone+Offset.swift */,
 				BB03DCD61F8269FF00318D16 /* SettingsModel.swift */,
+				BB86B306240BA3A900349651 /* Area.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -181,7 +173,6 @@
 			isa = PBXGroup;
 			children = (
 				BB2E05EA240B849700B3D8DA /* AnyTime.entitlements */,
-				BB647A5A1F7D3E1300C3C2D4 /* HalfModalPresentation */,
 				BB647A551F7B43FC00C3C2D4 /* AnyTime-Bridging-Header.h */,
 				BB1C59841F7688F000808529 /* AppDelegate.swift */,
 				BB03DCD11F82659500318D16 /* ViewModel */,
@@ -203,34 +194,6 @@
 				BB1C599B1F7688F000808529 /* Info.plist */,
 			);
 			path = AnyTimeTests;
-			sourceTree = "<group>";
-		};
-		BB647A5A1F7D3E1300C3C2D4 /* HalfModalPresentation */ = {
-			isa = PBXGroup;
-			children = (
-				BB647A661F7D3F7800C3C2D4 /* AppNavController.swift */,
-				BB647A5B1F7D3E1300C3C2D4 /* Transitioning */,
-				BB647A5F1F7D3E1300C3C2D4 /* Presentation */,
-			);
-			path = HalfModalPresentation;
-			sourceTree = SOURCE_ROOT;
-		};
-		BB647A5B1F7D3E1300C3C2D4 /* Transitioning */ = {
-			isa = PBXGroup;
-			children = (
-				BB647A5C1F7D3E1300C3C2D4 /* HalfModalInteractiveTransition.swift */,
-				BB647A5D1F7D3E1300C3C2D4 /* HalfModalTransitionAnimator.swift */,
-				BB647A5E1F7D3E1300C3C2D4 /* HalfModalTransitioningDelegate.swift */,
-			);
-			path = Transitioning;
-			sourceTree = "<group>";
-		};
-		BB647A5F1F7D3E1300C3C2D4 /* Presentation */ = {
-			isa = PBXGroup;
-			children = (
-				BB647A601F7D3E1300C3C2D4 /* HalfModalPresentationController.swift */,
-			);
-			path = Presentation;
 			sourceTree = "<group>";
 		};
 		BB647A651F7D3F0200C3C2D4 /* View */ = {
@@ -431,7 +394,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\" ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f\n";
+			shellScript = "if [[$ARCHS != \"x86_64\"]]; then\n    \"${PODS_ROOT}/Fabric/run\" ffd1a21a45423d2959636c52dc02535a8fad1b60 dd1dfceaa343fa98ef49d12fa7f022c135640990742116059b7d05091289834f\nfi\n\n";
 		};
 		BBE5E6011F77DC8A00A9F715 /* swift lint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -489,16 +452,12 @@
 				BB03DCD71F8269FF00318D16 /* SettingsModel.swift in Sources */,
 				BB1C59871F7688F000808529 /* GlanceViewController.swift in Sources */,
 				BB95E0671F78A8E700858FD9 /* TimeZoneItem.swift in Sources */,
-				BB647A611F7D3E1300C3C2D4 /* HalfModalInteractiveTransition.swift in Sources */,
 				BBC1354D1F7F76A600247325 /* GlanceViewModel.swift in Sources */,
 				BB1C59851F7688F000808529 /* AppDelegate.swift in Sources */,
 				BB647A581F7B43FD00C3C2D4 /* catchNSException.m in Sources */,
-				BB647A671F7D3F7800C3C2D4 /* AppNavController.swift in Sources */,
-				BB647A641F7D3E1300C3C2D4 /* HalfModalPresentationController.swift in Sources */,
-				BB647A621F7D3E1300C3C2D4 /* HalfModalTransitionAnimator.swift in Sources */,
 				BB1716D31F82197000E7460D /* String+Utils.swift in Sources */,
 				BB3A1DCF1F7A0CE400F793F8 /* DatePicker.swift in Sources */,
-				BB647A631F7D3E1300C3C2D4 /* HalfModalTransitioningDelegate.swift in Sources */,
+				BB86B307240BA3A900349651 /* Area.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,7 +541,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -636,7 +595,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -655,7 +614,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DEVELOPMENT_TEAM = FH9QG7ZJR9;
+				DEVELOPMENT_TEAM = V28VJH6B6S;
 				INFOPLIST_FILE = AnyTime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -warn-long-function-bodies=200 -Xfrontend -warn-long-expression-type-checking=200";
@@ -677,7 +636,7 @@
 				CODE_SIGN_ENTITLEMENTS = AnyTime/AnyTime.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
-				DEVELOPMENT_TEAM = FH9QG7ZJR9;
+				DEVELOPMENT_TEAM = V28VJH6B6S;
 				INFOPLIST_FILE = AnyTime/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = in.fourplex.anytime;

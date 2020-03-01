@@ -10,7 +10,7 @@ import UIKit
 import SwiftyUserDefaults
 import NotificationBannerSwift
 
-class FormatEditorViewController: UIViewController, HalfModalPresentable {
+class FormatEditorViewController: UIViewController {
 
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -47,9 +47,6 @@ class FormatEditorViewController: UIViewController, HalfModalPresentable {
         super.viewDidLoad()
         configureSubviews()
         updatePreview()
-        DispatchQueue.main.delay(ms: 500) {
-            self.maximizeToFullScreen()
-        }
         _ = NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: input, queue: OperationQueue.main) { [weak self] _ in
             self?.updatePreview()
         }
