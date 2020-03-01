@@ -23,7 +23,7 @@ class TimezonesViewModel {
 
     func configure(ids: [String]) {
         let items = TimeZoneItem.get(ids: ids)
-        let fav = TimeZoneItem.get(ids: Defaults[.favorites])
+        let fav = TimeZoneItem.get(ids: Defaults.favorites)
         let predicate = { (item: TimeZoneItem) -> String in
             if item.title == "UTC" || item.title == "GMT" {
                 return "N/A"
@@ -60,10 +60,9 @@ class TimezonesViewModel {
         if self.set.contains(item) {
             return false
         } else {
-            var favs = Defaults[.favorites]
+            var favs = Defaults.favorites
             favs.append(item.timezone.identifier)
-            Defaults.set(.favorites, favs)
-            Defaults.synchronize()
+            Defaults.favorites = favs
             set.insert(item)
             return true
         }

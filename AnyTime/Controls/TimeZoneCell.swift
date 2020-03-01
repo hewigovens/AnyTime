@@ -66,7 +66,7 @@ class TimeZoneCell: UITableViewCell, Reusable {
         return label
     }
 
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
     }
 
@@ -87,7 +87,7 @@ class TimeZoneCell: UITableViewCell, Reusable {
         let cell = self
         cell.backgroundColor = UIColor.midnightBlue()
         cell.textLabel?.textColor = UIColor.ghostWhite()
-        cell.detailTextLabel?.textColor = UIColor(red:0.51, green:0.53, blue:0.56, alpha:1.00)
+        cell.detailTextLabel?.textColor = UIColor(red: 0.51, green: 0.53, blue: 0.56, alpha: 1.00)
         cell.infoLabel?.textColor = UIColor.ghostWhite()
     }
 

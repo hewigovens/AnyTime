@@ -27,7 +27,7 @@ class FormatEditorViewController: UIViewController, HalfModalPresentable {
         input.leftViewMode = .always
         input.clearButtonMode = .always
         input.backgroundColor = UIColor.white
-        input.text = Defaults[.format]
+        input.text = Defaults.format
         input.textColor = UIColor.black25Percent()
         input.font = UIFont.monospacedDigitSystemFont(ofSize: 16, weight: .regular)
         input.autocorrectionType = .no
@@ -50,7 +50,7 @@ class FormatEditorViewController: UIViewController, HalfModalPresentable {
         DispatchQueue.main.delay(ms: 500) {
             self.maximizeToFullScreen()
         }
-        _ = NotificationCenter.default.addObserver(forName: Notification.Name.UITextFieldTextDidChange, object: input, queue: OperationQueue.main) { [weak self] _ in
+        _ = NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: input, queue: OperationQueue.main) { [weak self] _ in
             self?.updatePreview()
         }
     }
@@ -92,8 +92,7 @@ class FormatEditorViewController: UIViewController, HalfModalPresentable {
         guard let format = self.input.text, format.length > 0 else {
             return
         }
-        Defaults.set(.format, format)
-        Defaults.synchronize()
+        Defaults.format = format
 
         let banner = NotificationBanner(title: "Date format updated.", style: .success)
         banner.duration = 1

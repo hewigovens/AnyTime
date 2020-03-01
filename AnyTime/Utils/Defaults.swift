@@ -10,7 +10,7 @@ import Foundation
 import SwiftyUserDefaults
 
 public func registerDefaults() {
-    UserDefaults.standard.register(defaults:[
+    UserDefaults.standard.register(defaults: [
         "favorites": [
         "GMT",
         "Asia/Shanghai",
@@ -38,9 +38,15 @@ extension AnyTimeKey {
 }
 
 extension DefaultsKeys {
-    static let favorites = DefaultsKey<[String]>(AnyTimeKey.favorites.rawValue)
-    static let format = DefaultsKey<String>(AnyTimeKey.format.rawValue)
-    static let preferCity = DefaultsKey<Int>(AnyTimeKey.preferCity.rawValue)
+    var favorites: DefaultsKey<[String]> {
+        .init(AnyTimeKey.favorites.rawValue, defaultValue: [])
+    }
+    var format: DefaultsKey<String> {
+        .init(AnyTimeKey.format.rawValue, defaultValue: "HH:mm MMM d yyyy")
+    }
+    var preferCity: DefaultsKey<Int> {
+        .init(AnyTimeKey.preferCity.rawValue, defaultValue: 0)
+    }
 }
 
 extension TimeZoneItem {
@@ -55,11 +61,11 @@ extension TimeZoneItem {
         let items = ids.map { identifier -> TimeZoneItem in
             let timezone = TimeZone(identifier: identifier)!
             formatter.timeZone = timezone
-             var abbr = "GMT"
+            var abbr = "GMT"
             if let val = dict[identifier] {
                 abbr = val
-            } else if let _abbr = timezone.abbreviation() {
-                if _abbr.hasPrefix("GMT") {
+            } else if let val = timezone.abbreviation() {
+                if val.hasPrefix("GMT") {
                     let array = formatter.string(from: date)
                         .split(separator: " ")
                     if array.count > 2 {

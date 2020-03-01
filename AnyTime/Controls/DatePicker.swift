@@ -54,12 +54,12 @@ class DatePicker: UIView {
     }
 
     public func dismiss() {
-        UIView.animate(withDuration: 0.2, animations: ({
+        UIView.animate(withDuration: 0.2, animations: {
             self.alpha = 0
-        })) { _ in
+        }, completion: { _ in
             self.overlay.removeFromSuperview()
             self.removeFromSuperview()
-        }
+        })
     }
 
     @objc func cancelButtonTapped() {
@@ -117,7 +117,7 @@ class DatePicker: UIView {
         picker.backgroundColor = UIColor.white
         try? ObjC.catchException {
             picker.setValue(UIColor.black25Percent(), forKey: "textColor")
-            picker.sendAction(Selector("setHighlightsToday:"), to: nil, for: nil)
+            picker.sendAction(Selector(("setHighlightsToday:")), to: nil, for: nil)
         }
         return picker
     }()

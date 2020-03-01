@@ -18,9 +18,9 @@ let timezonesCellId = "TimezonesCell"
 class TimezonesViewController: UIViewController, HalfModalPresentable {
 
     lazy var viewModel: TimezonesViewModel = {
-        let vm = TimezonesViewModel()
-        vm.owner = self
-        return vm
+        let vModel = TimezonesViewModel()
+        vModel.owner = self
+        return vModel
     }()
     weak var banner: NotificationBanner?
 
@@ -82,8 +82,8 @@ class TimezonesViewController: UIViewController, HalfModalPresentable {
         self.title = "Timezones"
         let image = FAKIonIcons.image(with: "ion-ios-close-empty", size: 30)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(close))
-        let up_image = FAKIonIcons.image(with: "ion-ios-arrow-up", size: 24)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: up_image, style: .plain, target: self, action: #selector(maximize))
+        let upImage = FAKIonIcons.image(with: "ion-ios-arrow-up", size: 24)
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: upImage, style: .plain, target: self, action: #selector(maximize))
     }
 
     func configureSubviews() {

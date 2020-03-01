@@ -59,7 +59,7 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
                 }
                 Defaults.synchronize()
                 self?.sections[0].items[1].value = (self?.preferDisplay)!
-                self?.tableView.reloadRows(at: [IndexPath(row: 1, section:0)], with: .automatic)
+                self?.tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
             })
         ]))
 
@@ -85,8 +85,8 @@ class SettingsViewController: UITableViewController, HalfModalPresentable {
         self.title = "Settings"
         let image = FAKIonIcons.image(with: "ion-ios-close-empty", size: 30)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(close))
-        let up_image = FAKIonIcons.image(with: "ion-ios-arrow-up", size: 24)
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: up_image, style: .plain, target: self, action: #selector(maximize))
+        let upImage = FAKIonIcons.image(with: "ion-ios-arrow-up", size: 24)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: upImage, style: .plain, target: self, action: #selector(maximize))
     }
 
     func configureSubviews() {

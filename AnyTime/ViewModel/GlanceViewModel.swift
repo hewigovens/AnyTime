@@ -36,18 +36,18 @@ class GlanceViewModel: NSObject {
     }
 
     func finishInit() {
-        self.favs = Defaults[.favorites]
-        self.dateformat = Defaults[.format]
+        self.favs = Defaults.favorites
+        self.dateformat = Defaults.format
         self.timezones = TimeZoneItem.get(ids: favs)
 
         for key in AnyTimeKey.all() {
-            Defaults.addObserver(self, forKeyPath: key, options: [.new], context: nil)
+            UserDefaults.standard.addObserver(self, forKeyPath: key, options: [.new], context: nil)
         }
     }
 
     deinit {
         for key in AnyTimeKey.all() {
-            Defaults.removeObserver(self, forKeyPath: key)
+            UserDefaults.standard.removeObserver(self, forKeyPath: key)
         }
     }
 
@@ -62,17 +62,17 @@ class GlanceViewModel: NSObject {
     func move(at indexPath: IndexPath, to: IndexPath) {
     //swiftlint:enable identifier_name
         timezones.move(at: indexPath.row, to: to.row)
-        Defaults.set(.favorites, timezones.map { $0.timezone.identifier })
+        Defaults.favorites = timezones.map { $0.timezone.identifier }
     }
 
     func delete(at indexPath: IndexPath) {
         timezones.remove(at: indexPath.row)
         favs.remove(at: indexPath.row)
-        Defaults.set(.favorites, self.favs)
+        Defaults.favorites = self.favs
     }
 
     //swiftlint:disable block_based_kvo
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
 
         if let visiable = owner?.visiable, visiable == true {
             return
@@ -88,7 +88,7 @@ class GlanceViewModel: NSObject {
             }
             if self.favs != new {
                 self.favs = new
-                self.timezones = TimeZoneItem.get(ids: Defaults[.favorites])
+                self.timezones = TimeZoneItem.get(ids: Defaults.favorites)
                 owner?.listView.reloadData()
             }
         } else if keyPath == AnyTimeKey.format.rawValue {

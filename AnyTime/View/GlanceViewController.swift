@@ -115,18 +115,18 @@ class GlanceViewController: UITableViewController {
             }
 
             let action = {
-                guard let vm = self?.viewModel else { return }
-                let vc = EKEventEditViewController()
-                let event = EKEvent(eventStore: vm.store)
+                guard let viewModel = self?.viewModel else { return }
+                let viewController = EKEventEditViewController()
+                let event = EKEvent(eventStore: viewModel.store)
                 event.notes = "\(cell.infoLabel?.text ?? "") \(cell.timezone?.timezone.abbreviation() ?? "")"
-                event.startDate = vm.selectedDate
-                event.endDate = vm.selectedDate?.addingTimeInterval(3600)
+                event.startDate = viewModel.selectedDate
+                event.endDate = viewModel.selectedDate?.addingTimeInterval(3600)
                 event.timeZone = cell.timezone?.timezone
-                event.calendar = vm.store.defaultCalendarForNewEvents
-                vc.eventStore = vm.store
-                vc.event = event
-                vc.editViewDelegate = self
-                self?.present(vc, animated: true, completion: nil)
+                event.calendar = viewModel.store.defaultCalendarForNewEvents
+                viewController.eventStore = viewModel.store
+                viewController.event = event
+                viewController.editViewDelegate = self
+                self?.present(viewController, animated: true, completion: nil)
             }
 
             if EKEventStore.authorizationStatus(for: .event) != .authorized {
@@ -171,8 +171,8 @@ extension GlanceViewController: EKEventEditViewDelegate {
 
 extension GlanceViewController {
     @objc func addTimezone() {
-        let vc = TimezonesViewController()
-        let nav = UINavigationController(rootViewController: vc)
+        let timezonesVC = TimezonesViewController()
+        let nav = UINavigationController(rootViewController: timezonesVC)
         self.halfModalTransitioningDelegate = HalfModalTransitioningDelegate(viewController: self, presentingViewController: nav)
         nav.modalPresentationStyle = .custom
         nav.transitioningDelegate = self.halfModalTransitioningDelegate
@@ -180,8 +180,8 @@ extension GlanceViewController {
     }
 
     @objc func showSettings() {
-        let vc = SettingsViewController(style: .plain)
-        let nav = UINavigationController(rootViewController: vc)
+        let settingsVC = SettingsViewController(style: .plain)
+        let nav = UINavigationController(rootViewController: settingsVC)
         self.halfModalTransitioningDelegate = HalfModalTransitioningDelegate(viewController: self, presentingViewController: nav)
         nav.modalPresentationStyle = .custom
         nav.transitioningDelegate = self.halfModalTransitioningDelegate
@@ -261,8 +261,8 @@ extension GlanceViewController {
         }
         picker.timezone = timezone
         picker.selectCompletion = { [weak self] date in
-            guard let ss = self else { return }
-            ss.update(date: date)
+            guard let `self` = self else { return }
+            self.update(date: date)
         }
         picker.showIn(view: self.navigationController?.view, duration: 0.7)
         self.picker = picker
@@ -270,9 +270,9 @@ extension GlanceViewController {
 
     func update(date: Date) {
         viewModel.selectedDate = date
-        for i in 0..<viewModel.timezones.count {
-            let idx = IndexPath(row: i, section: 0)
-            guard let cell = tableView.cellForRow(at: idx) as? TimeZoneCell else {
+        for idx in 0..<viewModel.timezones.count {
+            let indexPath = IndexPath(row: idx, section: 0)
+            guard let cell = tableView.cellForRow(at: indexPath) as? TimeZoneCell else {
                 continue
             }
             cell.date = date
@@ -283,12 +283,12 @@ extension GlanceViewController {
         self.title = "AnyTime"
         let rightSize: CGFloat = 30
         let rightIcon = FAKIonIcons.iosPlusEmptyIcon(withSize: rightSize)
-        rightIcon?.addAttribute(NSAttributedStringKey.foregroundColor.rawValue, value: UIColor.black)
+        rightIcon?.addAttribute(NSAttributedString.Key.foregroundColor.rawValue, value: UIColor.black)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: rightIcon?.image(with: CGSize(width: rightSize, height: rightSize)), style: .plain, target: self, action: #selector(addTimezone))
 
         let leftSize: CGFloat = 24
         let leftIcon = FAKIonIcons.iosGearOutlineIcon(withSize: leftSize)
-        rightIcon?.addAttribute(NSAttributedStringKey.foregroundColor.rawValue, value: UIColor.black)
+        rightIcon?.addAttribute(NSAttributedString.Key.foregroundColor.rawValue, value: UIColor.black)
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: leftIcon?.image(with: CGSize(width: leftSize, height: leftSize)), style: .plain, target: self, action: #selector(showSettings))
     }
 
