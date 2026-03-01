@@ -1,0 +1,42 @@
+name: AnyTime
+
+options:
+  minimumXcodeGenVersion: 2.44.1
+  defaultConfig: Debug
+
+packages:
+  AnyTimeCore:
+    path: Packages/AnyTimeCore
+
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    MARKETING_VERSION: 2.0.1
+    CURRENT_PROJECT_VERSION: 21
+
+targets:
+  AnyTime:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: App
+      - path: App/Resources/Assets.xcassets
+        buildPhase: resources
+      - path: App/Resources/Base.lproj
+        buildPhase: resources
+    dependencies:
+      - package: AnyTimeCore
+        product: AnyTimeCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.anytime
+        INFOPLIST_FILE: App/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: 1,2
+        CODE_SIGN_STYLE: Automatic
+        SUPPORTS_MACCATALYST: NO
+        DEVELOPMENT_TEAM: V28VJH6B6S
+    scheme:
+      gatherCoverageData: false
