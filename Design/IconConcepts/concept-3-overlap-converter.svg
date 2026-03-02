@@ -1,0 +1,48 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="leftDial3" x1="190" y1="240" x2="532" y2="734" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FBFE" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#A8C7D9" stop-opacity="0.44"/>
+    </linearGradient>
+    <linearGradient id="rightDial3" x1="446" y1="222" x2="786" y2="742" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7BD6DF" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#168EAF" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="shadow3" x="86" y="132" width="850" height="774" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="26"/>
+      <feGaussianBlur stdDeviation="28"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.07 0 0 0 0 0.12 0 0 0 0 0.17 0 0 0 0.2 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3_1" result="shape"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="#163244"/>
+  <g filter="url(#shadow3)">
+    <circle cx="394" cy="492" r="224" fill="url(#leftDial3)"/>
+    <circle cx="394" cy="492" r="218" stroke="white" stroke-opacity="0.28" stroke-width="12"/>
+    <circle cx="628" cy="486" r="224" fill="url(#rightDial3)"/>
+    <circle cx="628" cy="486" r="218" stroke="white" stroke-opacity="0.22" stroke-width="12"/>
+    <g opacity="0.22" stroke="white" stroke-width="9" stroke-linecap="round">
+      <path d="M394 320V358"/>
+      <path d="M494 360L468 391"/>
+      <path d="M532 460L494 466"/>
+      <path d="M294 360L320 391"/>
+      <path d="M256 460L294 466"/>
+      <path d="M394 626V588"/>
+      <path d="M528 352C562 341 595 336 628 336C706 336 772 364 821 413"/>
+      <path d="M529 620C563 631 595 636 628 636C706 636 772 608 821 559"/>
+    </g>
+    <path d="M394 492V624" stroke="#1A2C52" stroke-width="30" stroke-linecap="round"/>
+    <path d="M394 492L300 410" stroke="#1A2C52" stroke-width="24" stroke-linecap="round"/>
+    <circle cx="394" cy="492" r="20" fill="#1A2C52"/>
+    <path d="M628 486V384" stroke="white" stroke-width="24" stroke-linecap="round"/>
+    <path d="M628 486L712 532" stroke="white" stroke-width="20" stroke-linecap="round"/>
+    <circle cx="628" cy="486" r="16" fill="white"/>
+    <path d="M470 252C514 228 565 214 619 214C682 214 741 234 793 270" stroke="#F0A03A" stroke-width="20" stroke-linecap="round"/>
+    <path d="M457 744C506 778 565 796 628 796C693 796 753 776 804 739" stroke="#26C0DB" stroke-width="20" stroke-linecap="round"/>
+    <path d="M470 486H554" stroke="#F0A03A" stroke-width="18" stroke-linecap="round"/>
+    <path d="M533 449L570 486L533 523" stroke="#F0A03A" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
