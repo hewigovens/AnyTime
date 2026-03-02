@@ -1,7 +1,7 @@
 import SwiftUI
 import AnyTimeCore
 
-struct ClockCardView: View {
+struct ClockCardView: View, Equatable {
     let presentation: ClockPresentation
 
     var body: some View {

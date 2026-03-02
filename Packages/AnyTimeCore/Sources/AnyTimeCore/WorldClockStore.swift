@@ -4,7 +4,13 @@ import Observation
 @MainActor
 @Observable
 public final class WorldClockStore {
-    public var referenceDate: Date
+    public var referenceDate: Date {
+        didSet {
+            refreshPresentations()
+        }
+    }
+
+    public private(set) var presentations: [ClockPresentation] = []
 
     public var labelStyle: ClockLabelStyle {
         get { configuration.labelStyle }
@@ -52,10 +58,6 @@ public final class WorldClockStore {
         presentations.first
     }
 
-    public var presentations: [ClockPresentation] {
-        configuration.favoriteTimeZoneIDs.compactMap(makePresentation(for:))
-    }
-
     private let persistence: any WorldClockPersisting
     private let currentTimeZoneID: String
     private var configuration: WorldClockConfiguration
@@ -71,6 +73,7 @@ public final class WorldClockStore {
 
         let stored = persistence.loadConfiguration() ?? .default(currentTimeZoneID: currentTimeZoneID)
         configuration = Self.sanitized(stored, currentTimeZoneID: currentTimeZoneID)
+        refreshPresentations()
         persistence.saveConfiguration(configuration)
     }
 
@@ -152,10 +155,31 @@ public final class WorldClockStore {
 
     public func restoreDefaults() {
         configuration = .default(currentTimeZoneID: currentTimeZoneID)
+        refreshPresentations()
         persistence.saveConfiguration(configuration)
     }
 
-    private func makePresentation(for identifier: String) -> ClockPresentation? {
+    private func refreshPresentations() {
+        let referenceTimeZoneID = referenceTimeZoneID
+        let referenceTimeZone = referenceTimeZone
+        let referenceOffsetSeconds = referenceTimeZone.secondsFromGMT(for: referenceDate)
+
+        presentations = configuration.favoriteTimeZoneIDs.compactMap { identifier in
+            makePresentation(
+                for: identifier,
+                referenceTimeZoneID: referenceTimeZoneID,
+                referenceTimeZone: referenceTimeZone,
+                referenceOffsetSeconds: referenceOffsetSeconds
+            )
+        }
+    }
+
+    private func makePresentation(
+        for identifier: String,
+        referenceTimeZoneID: String,
+        referenceTimeZone: TimeZone,
+        referenceOffsetSeconds: Int
+    ) -> ClockPresentation? {
         guard
             let descriptor = descriptor(for: identifier),
             let timeZone = TimeZone(identifier: identifier)
@@ -166,7 +190,6 @@ public final class WorldClockStore {
         let abbreviation = descriptor.abbreviation(at: referenceDate)
         let cityName = preferredCityName(for: identifier, descriptor: descriptor)
         let targetOffsetSeconds = timeZone.secondsFromGMT(for: referenceDate)
-        let referenceOffsetSeconds = referenceTimeZone.secondsFromGMT(for: referenceDate)
         let utcOffsetText = ClockMath.utcOffsetText(seconds: targetOffsetSeconds)
         let comparisonText = identifier == referenceTimeZoneID
             ? "Reference zone"
@@ -221,7 +244,13 @@ public final class WorldClockStore {
     private func mutateConfiguration(_ mutate: (inout WorldClockConfiguration) -> Void) {
         var next = configuration
         mutate(&next)
-        configuration = Self.sanitized(next, currentTimeZoneID: currentTimeZoneID)
+        let sanitized = Self.sanitized(next, currentTimeZoneID: currentTimeZoneID)
+        guard sanitized != configuration else {
+            return
+        }
+
+        configuration = sanitized
+        refreshPresentations()
         persistence.saveConfiguration(configuration)
     }
 

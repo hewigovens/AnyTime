@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PullDownEasterEggView: View {
-    let pullDistance: CGFloat
+    let monitor: PullDownMonitor
     @State private var latchedPullDistance: CGFloat = 0
     @State private var releaseTask: Task<Void, Never>?
 
@@ -9,6 +9,10 @@ struct PullDownEasterEggView: View {
     private let textRevealOffset: CGFloat = 104
     private let textRevealRange: CGFloat = 72
     private let latchThreshold: CGFloat = 122
+
+    private var pullDistance: CGFloat {
+        monitor.pullDistance
+    }
 
     private var effectivePullDistance: CGFloat {
         max(pullDistance, latchedPullDistance)

@@ -57,6 +57,21 @@ final class AnyTimeCoreTests: XCTestCase {
         XCTAssertEqual(tokyo.dayText, "Tomorrow")
     }
 
+    func testPresentationsRefreshWhenReferenceDateChanges() {
+        let store = WorldClockStore(
+            persistence: InMemoryPersistence(
+                configuration: WorldClockConfiguration(favoriteTimeZoneIDs: ["UTC"])
+            ),
+            now: fixedDate
+        )
+
+        let initialTime = store.referencePresentation?.formattedTime
+
+        store.referenceDate = fixedDate.addingTimeInterval(3_600)
+
+        XCTAssertNotEqual(store.referencePresentation?.formattedTime, initialTime)
+    }
+
     func testSearchIncludesAlreadySelectedZones() {
         let store = WorldClockStore(
             persistence: InMemoryPersistence(

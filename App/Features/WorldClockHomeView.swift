@@ -6,11 +6,7 @@ struct WorldClockHomeView: View {
     @Bindable var store: WorldClockStore
     @State private var showingPicker = false
     @State private var showingSettings = false
-    @State private var listContentOffset: CGFloat = 0
-
-    private var pullDistance: CGFloat {
-        max(0, -listContentOffset)
-    }
+    @State private var pullDownMonitor = PullDownMonitor()
 
     var body: some View {
         GeometryReader { proxy in
@@ -23,7 +19,7 @@ struct WorldClockHomeView: View {
                     contentList
                 }
 
-                PullDownEasterEggView(pullDistance: pullDistance)
+                PullDownEasterEggView(monitor: pullDownMonitor)
                     .zIndex(1)
             }
             .ignoresSafeArea(edges: .top)
@@ -110,12 +106,12 @@ struct WorldClockHomeView: View {
             list.onScrollGeometryChange(for: CGFloat.self, of: { geometry in
                 geometry.contentOffset.y + geometry.contentInsets.top
             }, action: { _, newValue in
-                listContentOffset = newValue
+                pullDownMonitor.contentOffset = newValue
             })
         } else {
             list.background {
                 ScrollViewOffsetObserver { offset in
-                    listContentOffset = offset
+                    pullDownMonitor.contentOffset = offset
                 }
             }
         }
@@ -123,6 +119,7 @@ struct WorldClockHomeView: View {
 
     private func clockRow(for presentation: ClockPresentation) -> some View {
         ClockCardView(presentation: presentation)
+            .equatable()
             .contentShape(Rectangle())
             .onTapGesture {
                 guard presentation.isReference == false else {
