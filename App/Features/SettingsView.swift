@@ -60,7 +60,6 @@ private extension SettingsView {
         Form {
             displaySection
             aboutSection
-            locationSection
             resetSection
         }
     }
@@ -142,17 +141,6 @@ private extension SettingsView {
                             }
                             openURL(reviewURL)
                         }
-                    }
-                }
-
-                macSection("Location") {
-                    macSettingsRow(
-                        title: "Auto time zone",
-                        systemImage: "location",
-                        tint: AppTheme.magic
-                    ) {
-                        Toggle("Auto time zone", isOn: $store.usesLocationTimeZone)
-                            .labelsHidden()
                     }
                 }
 
@@ -252,18 +240,6 @@ private extension SettingsView {
                     title: "Restore Default",
                     systemImage: "arrow.counterclockwise.circle",
                     tint: .red
-                )
-            }
-        }
-    }
-
-    var locationSection: some View {
-        Section("Location") {
-            Toggle(isOn: $store.usesLocationTimeZone) {
-                SettingsRowLabel(
-                    title: "Auto time zone",
-                    systemImage: "location",
-                    tint: AppTheme.magic
                 )
             }
         }

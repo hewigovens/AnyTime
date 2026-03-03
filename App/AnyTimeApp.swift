@@ -30,7 +30,12 @@ struct AnyTimeApp: App {
                 NavigationStack {
                     WorldClockHomeView(
                         store: store,
-                        showingSettings: $showingSettings
+                        showingSettings: $showingSettings,
+                        currentLocationTimeZoneID: locationTimeZoneMonitor.currentTimeZoneID,
+                        currentLocationCityName: locationTimeZoneMonitor.currentCityName,
+                        requestCurrentLocation: {
+                            locationTimeZoneMonitor.requestCurrentLocation()
+                        }
                     )
                 }
             }
@@ -38,12 +43,11 @@ struct AnyTimeApp: App {
             .background(WindowBackgroundConfigurator())
             #elseif os(macOS)
             .background(MacWindowConfigurator())
-            .frame(minWidth: 450, minHeight: 780)
+            .frame(minWidth: 420, minHeight: 780)
             #endif
-            .task(id: store.usesLocationTimeZone) {
-                locationTimeZoneMonitor.setTrackingEnabled(store.usesLocationTimeZone)
-            }
             .task {
+                locationTimeZoneMonitor.refreshIfAuthorized()
+
                 guard didApplyScreenshotScenario == false else {
                     return
                 }
@@ -54,16 +58,9 @@ struct AnyTimeApp: App {
                     store.referenceDate = referenceDate
                 }
             }
-            .onChange(of: locationTimeZoneMonitor.currentTimeZoneID) { _, newValue in
-                guard let newValue else {
-                    return
-                }
-
-                store.updateAutomaticTimeZone(id: newValue)
-            }
         }
         #if os(macOS)
-        .defaultSize(width: 450, height: 780)
+        .defaultSize(width: 420, height: 780)
         #endif
         #if os(macOS)
         .commands {

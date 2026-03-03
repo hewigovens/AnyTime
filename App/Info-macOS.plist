@@ -27,6 +27,6 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>NSLocationUsageDescription</key>
-	<string>AnyTime uses your location to keep your current time zone updated automatically.</string>
+	<string>AnyTime uses your location to show your nearby time zone and highlight matching clocks.</string>
 </dict>
 </plist>

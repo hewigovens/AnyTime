@@ -26,6 +26,11 @@ enum ReferencePasteResolver {
         var preferredCityName: String?
         let freeformMatch = TimeZoneCatalog.shared.bestMatch(inFreeformText: trimmedClipboard)
 
+        if timeZoneID == nil, let namedTimeZoneMatch = namedTimeZoneMatch(in: trimmedClipboard) {
+            timeZoneID = namedTimeZoneMatch.timeZoneID
+            preferredCityName = namedTimeZoneMatch.preferredCityName
+        }
+
         if timeZoneID == nil, let offsetToken = explicitOffsetToken(in: trimmedClipboard) {
             timeZoneID = bestTimeZoneIdentifier(matching: offsetToken)
         }
@@ -99,7 +104,8 @@ enum ReferencePasteResolver {
                 preferredCityName: preferredCityName,
                 message: feedbackMessage(
                     date: resolvedDate,
-                    zoneDisplayName: zoneDisplayName
+                    zoneDisplayName: zoneDisplayName,
+                    timeZoneID: timeZoneID
                 )
             )
         )
@@ -147,6 +153,18 @@ enum ReferencePasteResolver {
             .uppercased()
 
         return candidate
+    }
+
+    private static func namedTimeZoneMatch(in text: String) -> (timeZoneID: String, preferredCityName: String?)? {
+        let normalizedText = text.normalizedPasteSearchText
+
+        for override in namedTimeZoneOverrides {
+            if normalizedText.range(of: override.pattern, options: .regularExpression) != nil {
+                return (override.timeZoneID, override.preferredCityName)
+            }
+        }
+
+        return nil
     }
 
     private static func bestTimeZoneIdentifier(matching query: String) -> String? {
@@ -247,13 +265,14 @@ enum ReferencePasteResolver {
 
     private static func feedbackMessage(
         date: Date?,
-        zoneDisplayName: String?
+        zoneDisplayName: String?,
+        timeZoneID: String?
     ) -> String {
         switch (date, zoneDisplayName) {
         case let (date?, zone?):
-            return "Updated to \(pasteFeedbackFormatter.string(from: date)) in \(zone)."
+            return "Updated to \(pasteFeedbackFormatter(timeZoneID: timeZoneID).string(from: date)) in \(zone)."
         case let (date?, nil):
-            return "Updated time to \(pasteFeedbackFormatter.string(from: date))."
+            return "Updated time to \(basePasteFeedbackFormatter.string(from: date))."
         case let (nil, zone?):
             return "Switched reference zone to \(zone)."
         default:
@@ -322,12 +341,47 @@ enum ReferencePasteResolver {
         }
     )
 
-    private static let pasteFeedbackFormatter: DateFormatter = {
+    private static let namedTimeZoneOverrides: [(pattern: String, timeZoneID: String, preferredCityName: String?)] = [
+        namedTimeZoneOverride(["et", "est", "edt", "eastern time"], timeZoneID: "America/New_York", preferredCityName: "New York"),
+        namedTimeZoneOverride(["ct", "cst", "cdt", "central time"], timeZoneID: "America/Chicago", preferredCityName: "Chicago"),
+        namedTimeZoneOverride(["mt", "mst", "mdt", "mountain time"], timeZoneID: "America/Denver", preferredCityName: "Denver"),
+        namedTimeZoneOverride(["pt", "pst", "pdt", "pacific time"], timeZoneID: "America/Los_Angeles", preferredCityName: "Los Angeles"),
+        namedTimeZoneOverride(["jst", "japan time", "japan standard time"], timeZoneID: "Asia/Tokyo", preferredCityName: "Tokyo"),
+        namedTimeZoneOverride(["kst", "korea time", "korea standard time"], timeZoneID: "Asia/Seoul", preferredCityName: "Seoul"),
+        namedTimeZoneOverride(["hkt", "hong kong time"], timeZoneID: "Asia/Hong_Kong", preferredCityName: "Hong Kong"),
+        namedTimeZoneOverride(["sgt", "singapore time"], timeZoneID: "Asia/Singapore", preferredCityName: "Singapore")
+    ]
+
+    private static let basePasteFeedbackFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter
     }()
+
+    private static func pasteFeedbackFormatter(timeZoneID: String?) -> DateFormatter {
+        let formatter = basePasteFeedbackFormatter.copy() as! DateFormatter
+        if let timeZoneID, let timeZone = TimeZone(identifier: timeZoneID) {
+            formatter.timeZone = timeZone
+        }
+        return formatter
+    }
+
+    private static func namedTimeZoneOverride(
+        _ tokens: [String],
+        timeZoneID: String,
+        preferredCityName: String?
+    ) -> (pattern: String, timeZoneID: String, preferredCityName: String?) {
+        let alternation = tokens
+            .map(NSRegularExpression.escapedPattern(for:))
+            .joined(separator: "|")
+
+        return (
+            pattern: "(?<![a-z])(?:\(alternation))(?![a-z])",
+            timeZoneID: timeZoneID,
+            preferredCityName: preferredCityName
+        )
+    }
 }
 
 private struct DetectedDate {

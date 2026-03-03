@@ -45,6 +45,8 @@ targets:
         DEVELOPMENT_TEAM: V28VJH6B6S
     scheme:
       gatherCoverageData: false
+      testTargets:
+        - AnyTimeAppTests
 
   AnyTimeMac:
     type: application
@@ -74,3 +76,20 @@ targets:
         DEVELOPMENT_TEAM: V28VJH6B6S
     scheme:
       gatherCoverageData: false
+
+  AnyTimeAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Tests/AnyTimeAppTests
+    dependencies:
+      - target: AnyTime
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.anytime.tests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/AnyTime.app/AnyTime"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: V28VJH6B6S

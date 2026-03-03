@@ -3,6 +3,9 @@ import AnyTimeCore
 
 struct TimeZonePickerView: View {
     @Bindable var store: WorldClockStore
+    let currentLocationTimeZoneID: String?
+    let currentLocationCityName: String?
+    let requestCurrentLocation: () -> Void
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @State private var searchText = ""
@@ -10,6 +13,7 @@ struct TimeZonePickerView: View {
     @State private var isLookingUpCities = false
     @State private var didRequestInitialFocus = false
     @State private var didApplyScreenshotScenario = false
+    @State private var shouldSelectCurrentLocationWhenResolved = false
     @FocusState private var isSearchFieldFocused: Bool
 
     private var localSections: [TimeZoneSection] {
@@ -44,6 +48,15 @@ struct TimeZonePickerView: View {
                     dismiss()
                 }
             }
+
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    selectCurrentLocation()
+                } label: {
+                    Label(currentLocationButtonTitle, systemImage: "location.fill")
+                }
+                .accessibilityLabel("Use current location time zone")
+            }
         }
         .task {
             guard AppStoreScreenshotScenario.current != .search else {
@@ -76,6 +89,17 @@ struct TimeZonePickerView: View {
                 self.searchText = searchText
                 isSearchFieldFocused = false
             }
+        }
+        .onChange(of: currentLocationTimeZoneID) { _, newValue in
+            guard
+                shouldSelectCurrentLocationWhenResolved,
+                let newValue
+            else {
+                return
+            }
+
+            shouldSelectCurrentLocationWhenResolved = false
+            selectTimeZone(id: newValue, preferredCityName: normalizedCurrentLocationCityName)
         }
     }
 
@@ -187,6 +211,12 @@ struct TimeZonePickerView: View {
                 foreground: AppTheme.warm,
                 background: AppTheme.warm.opacity(0.18)
             )
+        } else if timeZoneID == currentLocationTimeZoneID {
+            badge(
+                "Near you",
+                foreground: AppTheme.magic,
+                background: AppTheme.magic.opacity(0.14)
+            )
         } else if selectedIDs.contains(timeZoneID) {
             badge(
                 "Added",
@@ -250,6 +280,19 @@ struct TimeZonePickerView: View {
             store.selectTimeZone(id: id, preferredCityName: preferredCityName)
         }
         dismiss()
+    }
+
+    private func selectCurrentLocation() {
+        if let currentLocationTimeZoneID {
+            selectTimeZone(
+                id: currentLocationTimeZoneID,
+                preferredCityName: normalizedCurrentLocationCityName
+            )
+            return
+        }
+
+        shouldSelectCurrentLocationWhenResolved = true
+        requestCurrentLocation()
     }
 
     private func resultRow(
@@ -326,6 +369,25 @@ struct TimeZonePickerView: View {
             .padding(.vertical, 6)
             .background(background.opacity(colorScheme == .dark ? 1 : 0.92), in: Capsule())
             .foregroundStyle(foreground)
+    }
+
+    private var currentLocationButtonTitle: String {
+        guard let normalizedCurrentLocationCityName else {
+            return "Nearby"
+        }
+
+        return normalizedCurrentLocationCityName.count <= 14
+            ? normalizedCurrentLocationCityName
+            : "Nearby"
+    }
+
+    private var normalizedCurrentLocationCityName: String? {
+        guard let trimmed = currentLocationCityName?.trimmingCharacters(in: .whitespacesAndNewlines),
+              trimmed.isEmpty == false else {
+            return nil
+        }
+
+        return trimmed
     }
 }
 

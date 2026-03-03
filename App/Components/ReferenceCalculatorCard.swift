@@ -12,18 +12,18 @@ struct ReferenceCalculatorCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text("Timezone Calculator")
-                    .font(.system(.headline, design: .rounded).weight(.semibold))
+                    .font(.system(.title3, design: .rounded).weight(.bold))
                     .foregroundStyle(.primary)
 
-                Text("Tap or Drag to change reference.")
-                    .font(.footnote)
+                Text("Tap the date or time to change it quickly.")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
             if let presentation = store.referencePresentation {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     formattedTimeLabel(for: presentation.formattedTime)
 
                     referenceZoneMenu {
@@ -32,10 +32,13 @@ struct ReferenceCalculatorCard: View {
                             Image(systemName: "chevron.up.chevron.down")
                                 .font(.caption.weight(.semibold))
                         }
-                        .font(.subheadline.weight(.medium))
+                        .font(.body.weight(.medium))
                         .foregroundStyle(.secondary)
                     }
+                    .padding(.leading, 4)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             referenceDateControl
@@ -104,14 +107,15 @@ struct ReferenceCalculatorCard: View {
 
     private func formattedTimeText(for time: String) -> some View {
         Text(time)
-            .font(.system(size: 34, weight: .bold, design: .rounded))
+            .font(.system(size: 36, weight: .bold, design: .rounded))
             .monospacedDigit()
+            .lineLimit(1)
+            .minimumScaleFactor(0.85)
             .foregroundStyle(.primary)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     #if os(iOS)
-    @ViewBuilder
     private var dateEditorSheet: some View {
         NavigationStack {
             ReferenceDateEditorView(store: store)
@@ -159,6 +163,7 @@ struct ReferenceCalculatorCard: View {
         .labelsHidden()
         .environment(\.timeZone, store.referenceTimeZone)
         .tint(AppTheme.accent)
+        .frame(maxWidth: .infinity, alignment: .leading)
         #endif
     }
 
@@ -234,7 +239,6 @@ struct ReferenceCalculatorCard: View {
 
     private static let topRowActions = quickActions
 
-    @ViewBuilder
     private func quickActionButton(_ action: QuickShift) -> some View {
         Button {
             if action.performsPaste {

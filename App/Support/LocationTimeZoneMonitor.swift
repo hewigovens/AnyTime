@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import AnyTimeCore
 
 #if canImport(CoreLocation)
 import CoreLocation
@@ -11,7 +12,8 @@ final class LocationTimeZoneMonitor: NSObject, @preconcurrency CLLocationManager
     private let geocoder = CLGeocoder()
 
     private(set) var currentTimeZoneID: String?
-    private var isTrackingEnabled = false
+    private(set) var currentCityName: String?
+    private var shouldRefreshWhenAuthorized = false
     private var lastGeocodedLocation: CLLocation?
 
     override init() {
@@ -21,44 +23,59 @@ final class LocationTimeZoneMonitor: NSObject, @preconcurrency CLLocationManager
         manager.distanceFilter = 5_000
     }
 
-    func setTrackingEnabled(_ enabled: Bool) {
-        isTrackingEnabled = enabled
-
-        guard enabled else {
-            manager.stopUpdatingLocation()
-            geocoder.cancelGeocode()
+    func refreshIfAuthorized() {
+        guard CLLocationManager.locationServicesEnabled() else {
             return
         }
 
+        switch manager.authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            resolveCurrentLocation()
+        case .notDetermined, .denied, .restricted:
+            return
+        @unknown default:
+            return
+        }
+    }
+
+    func requestCurrentLocation() {
         guard CLLocationManager.locationServicesEnabled() else {
             return
         }
 
         switch manager.authorizationStatus {
         case .notDetermined:
+            shouldRefreshWhenAuthorized = true
             manager.requestWhenInUseAuthorization()
         case .authorizedAlways, .authorizedWhenInUse:
-            manager.startUpdatingLocation()
-            if let location = manager.location {
-                reverseGeocode(location)
-            }
+            resolveCurrentLocation()
         case .denied, .restricted:
-            manager.stopUpdatingLocation()
+            return
         @unknown default:
-            manager.stopUpdatingLocation()
+            return
         }
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        guard isTrackingEnabled else {
+        guard shouldRefreshWhenAuthorized else {
             return
         }
 
-        setTrackingEnabled(true)
+        switch manager.authorizationStatus {
+        case .authorizedAlways, .authorizedWhenInUse:
+            shouldRefreshWhenAuthorized = false
+            resolveCurrentLocation()
+        case .denied, .restricted:
+            shouldRefreshWhenAuthorized = false
+        case .notDetermined:
+            break
+        @unknown default:
+            shouldRefreshWhenAuthorized = false
+        }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard isTrackingEnabled, let location = locations.last else {
+        guard let location = locations.last else {
             return
         }
 
@@ -66,6 +83,15 @@ final class LocationTimeZoneMonitor: NSObject, @preconcurrency CLLocationManager
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {}
+
+    private func resolveCurrentLocation() {
+        if let location = manager.location {
+            reverseGeocode(location)
+            return
+        }
+
+        manager.requestLocation()
+    }
 
     private func reverseGeocode(_ location: CLLocation) {
         if let lastGeocodedLocation, location.distance(from: lastGeocodedLocation) < 5_000 {
@@ -77,13 +103,18 @@ final class LocationTimeZoneMonitor: NSObject, @preconcurrency CLLocationManager
         geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, _ in
             guard
                 let self,
-                let timeZoneID = placemarks?.first?.timeZone?.identifier
+                let placemark = placemarks?.first,
+                let timeZoneID = placemark.timeZone?.identifier
             else {
                 return
             }
 
             Task { @MainActor in
                 self.currentTimeZoneID = timeZoneID
+                self.currentCityName = placemark.locality
+                    ?? placemark.subAdministrativeArea
+                    ?? placemark.name
+                    ?? TimeZoneDescriptor(identifier: timeZoneID)?.city
             }
         }
     }
@@ -93,7 +124,10 @@ final class LocationTimeZoneMonitor: NSObject, @preconcurrency CLLocationManager
 @Observable
 final class LocationTimeZoneMonitor {
     private(set) var currentTimeZoneID: String?
+    private(set) var currentCityName: String?
 
-    func setTrackingEnabled(_ enabled: Bool) {}
+    func refreshIfAuthorized() {}
+
+    func requestCurrentLocation() {}
 }
 #endif

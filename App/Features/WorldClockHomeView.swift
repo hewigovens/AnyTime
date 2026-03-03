@@ -4,6 +4,9 @@ import AnyTimeCore
 struct WorldClockHomeView: View {
     @Bindable var store: WorldClockStore
     @Binding var showingSettings: Bool
+    let currentLocationTimeZoneID: String?
+    let currentLocationCityName: String?
+    let requestCurrentLocation: () -> Void
     @State private var showingPicker = false
     @State private var pullDownMonitor = PullDownMonitor()
     @State private var didApplyScreenshotScenario = false
@@ -92,7 +95,12 @@ struct WorldClockHomeView: View {
     @ViewBuilder
     private var pickerSheet: some View {
         NavigationStack {
-            TimeZonePickerView(store: store)
+            TimeZonePickerView(
+                store: store,
+                currentLocationTimeZoneID: currentLocationTimeZoneID,
+                currentLocationCityName: currentLocationCityName,
+                requestCurrentLocation: requestCurrentLocation
+            )
         }
         #if os(macOS)
         .frame(minWidth: 680, minHeight: 520)
@@ -169,7 +177,11 @@ struct WorldClockHomeView: View {
     }
 
     private func clockRow(for presentation: ClockPresentation) -> some View {
-        ClockCardView(presentation: presentation)
+        ClockCardView(
+            presentation: presentation,
+            isCurrentLocation: presentation.timeZoneID == currentLocationTimeZoneID,
+            currentLocationCityName: currentLocationCityName
+        )
             .equatable()
             .contentShape(Rectangle())
             .onTapGesture {
