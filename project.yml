@@ -11,8 +11,8 @@ packages:
 settings:
   base:
     SWIFT_VERSION: 6.0
-    MARKETING_VERSION: 2.0.1
-    CURRENT_PROJECT_VERSION: 21
+    MARKETING_VERSION: 2.0.2
+    CURRENT_PROJECT_VERSION: 22
 
 targets:
   AnyTime:
@@ -65,7 +65,7 @@ targets:
     settings:
       base:
         PRODUCT_NAME: AnyTime
-        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.AnyTime
+        PRODUCT_BUNDLE_IDENTIFIER: in.fourplex.anytime
         INFOPLIST_FILE: App/Info-macOS.plist
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_ENTITLEMENTS: App/AnyTimeMac.entitlements
