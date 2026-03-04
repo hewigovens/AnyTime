@@ -7,6 +7,10 @@ struct WorldClockHomeView: View {
     let currentLocationTimeZoneID: String?
     let currentLocationCityName: String?
     let requestCurrentLocation: () -> Void
+    @State private var calendarEventStore = CalendarEventStore()
+    @State private var calendarFeedback: CalendarFeedback?
+    @State private var calendarDraft: CalendarDraft?
+    @State private var eventTitle = ""
     @State private var showingPicker = false
     @State private var pullDownMonitor = PullDownMonitor()
     @State private var didApplyScreenshotScenario = false
@@ -72,6 +76,37 @@ struct WorldClockHomeView: View {
         }
         .sheet(isPresented: $showingSettings) {
             settingsSheet
+        }
+        .alert("Add to Calendar", isPresented: showingCalendarDraft) {
+            TextField("Title", text: $eventTitle)
+
+            Button("Cancel", role: .cancel) {
+                dismissCalendarDraft()
+            }
+
+            Button("Save") {
+                guard let calendarDraft else {
+                    return
+                }
+
+                let title = eventTitle
+                dismissCalendarDraft()
+
+                Task {
+                    await createCalendarEvent(for: calendarDraft.presentation, title: title)
+                }
+            }
+        } message: {
+            if let calendarDraft {
+                Text("Create an event for \(calendarDraft.presentation.formattedTime) in \(calendarDraft.presentation.title).")
+            }
+        }
+        .alert(item: $calendarFeedback) { feedback in
+            Alert(
+                title: Text(feedback.title),
+                message: Text(feedback.message),
+                dismissButton: .default(Text("OK"))
+            )
         }
         .animation(.snappy, value: store.favoriteTimeZoneIDs)
         .task {
@@ -203,8 +238,8 @@ struct WorldClockHomeView: View {
                 }
             }
             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                Button("Copy", systemImage: "doc.on.doc") {
-                    PlatformClipboard.string = presentation.copyText
+                Button("Calendar", systemImage: "calendar.badge.plus") {
+                    presentCalendarDraft(for: presentation)
                 }
                 .tint(AppTheme.accent)
 
@@ -219,8 +254,8 @@ struct WorldClockHomeView: View {
             }
             #if os(macOS)
             .contextMenu {
-                Button("Copy", systemImage: "doc.on.doc") {
-                    PlatformClipboard.string = presentation.copyText
+                Button("Calendar", systemImage: "calendar.badge.plus") {
+                    presentCalendarDraft(for: presentation)
                 }
 
                 if presentation.isReference == false {
@@ -247,6 +282,44 @@ struct WorldClockHomeView: View {
             .listRowSeparator(.hidden)
     }
 
+    @MainActor
+    private func createCalendarEvent(for presentation: ClockPresentation, title: String) async {
+        do {
+            let message = try await calendarEventStore.createEvent(
+                title: title,
+                for: presentation,
+                referenceDate: store.referenceDate
+            )
+            calendarFeedback = CalendarFeedback(title: "Calendar Event Added", message: message)
+        } catch {
+            calendarFeedback = CalendarFeedback(
+                title: "Couldn’t Add Calendar Event",
+                message: (error as? LocalizedError)?.errorDescription ?? "Something went wrong."
+            )
+        }
+    }
+
+    private func presentCalendarDraft(for presentation: ClockPresentation) {
+        calendarDraft = CalendarDraft(presentation: presentation)
+        eventTitle = calendarEventStore.defaultTitle(for: presentation)
+    }
+
+    private func dismissCalendarDraft() {
+        calendarDraft = nil
+        eventTitle = ""
+    }
+
+    private var showingCalendarDraft: Binding<Bool> {
+        Binding(
+            get: { calendarDraft != nil },
+            set: { isPresented in
+                if isPresented == false {
+                    dismissCalendarDraft()
+                }
+            }
+        )
+    }
+
     private var searchButton: some View {
         Button {
             showingPicker = true
@@ -254,5 +327,22 @@ struct WorldClockHomeView: View {
             Label("Search", systemImage: "magnifyingglass")
         }
         .accessibilityLabel("Search time zones")
+    }
+}
+
+private struct CalendarFeedback: Identifiable {
+    let title: String
+    let message: String
+
+    var id: String {
+        "\(title)|\(message)"
+    }
+}
+
+private struct CalendarDraft: Identifiable {
+    let presentation: ClockPresentation
+
+    var id: String {
+        presentation.id
     }
 }

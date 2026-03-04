@@ -24,10 +24,6 @@ final class LocationTimeZoneMonitor: NSObject, @preconcurrency CLLocationManager
     }
 
     func refreshIfAuthorized() {
-        guard CLLocationManager.locationServicesEnabled() else {
-            return
-        }
-
         switch manager.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             resolveCurrentLocation()
@@ -39,10 +35,6 @@ final class LocationTimeZoneMonitor: NSObject, @preconcurrency CLLocationManager
     }
 
     func requestCurrentLocation() {
-        guard CLLocationManager.locationServicesEnabled() else {
-            return
-        }
-
         switch manager.authorizationStatus {
         case .notDetermined:
             shouldRefreshWhenAuthorized = true
