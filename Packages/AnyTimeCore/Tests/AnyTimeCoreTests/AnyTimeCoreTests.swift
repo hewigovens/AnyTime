@@ -57,6 +57,20 @@ final class AnyTimeCoreTests: XCTestCase {
         XCTAssertEqual(tokyo.dayText, "Tomorrow")
     }
 
+    func testDisplayedPresentationsHideZonesMatchingReferenceTime() {
+        let store = WorldClockStore(
+            persistence: InMemoryPersistence(
+                configuration: WorldClockConfiguration(
+                    favoriteTimeZoneIDs: ["UTC", "Europe/London", "Asia/Tokyo"]
+                )
+            ),
+            now: fixedDate
+        )
+
+        XCTAssertEqual(store.presentations.map(\.timeZoneID), ["UTC", "Europe/London", "Asia/Tokyo"])
+        XCTAssertEqual(store.displayedPresentations.map(\.timeZoneID), ["UTC", "Asia/Tokyo"])
+    }
+
     func testPresentationsRefreshWhenReferenceDateChanges() {
         let store = WorldClockStore(
             persistence: InMemoryPersistence(
@@ -191,6 +205,7 @@ final class AnyTimeCoreTests: XCTestCase {
         XCTAssertEqual(store.referenceCityName, "Beijing")
         XCTAssertEqual(store.referencePresentation?.title, "Beijing")
     }
+
 }
 
 private let fixedDate = ISO8601DateFormatter().date(from: "2024-01-15T12:00:00Z")!

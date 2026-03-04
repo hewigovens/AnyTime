@@ -36,8 +36,8 @@ struct QuickActionButtonStyle: ButtonStyle {
 
         return configuration.label
             .foregroundStyle(foreground)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 11)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
             .background(
                 Capsule(style: .continuous)
                     .fill(fill.opacity(configuration.isPressed ? 0.82 : 1))

@@ -1,12 +1,19 @@
 import SwiftUI
 import AnyTimeCore
-import UIKit
 
 struct WorldClockHomeView: View {
     @Bindable var store: WorldClockStore
+    @Binding var showingSettings: Bool
+    let currentLocationTimeZoneID: String?
+    let currentLocationCityName: String?
+    let requestCurrentLocation: () -> Void
+    @State private var calendarEventStore = CalendarEventStore()
+    @State private var calendarFeedback: CalendarFeedback?
+    @State private var calendarDraft: CalendarDraft?
+    @State private var eventTitle = ""
     @State private var showingPicker = false
-    @State private var showingSettings = false
     @State private var pullDownMonitor = PullDownMonitor()
+    @State private var didApplyScreenshotScenario = false
 
     var body: some View {
         GeometryReader { proxy in
@@ -24,8 +31,22 @@ struct WorldClockHomeView: View {
             }
             .ignoresSafeArea(edges: .top)
         }
+        #if os(iOS)
         .toolbar(.hidden, for: .navigationBar)
+        #endif
         .toolbar {
+            #if os(macOS)
+            ToolbarItemGroup {
+                searchButton
+
+                Button {
+                    showingSettings = true
+                } label: {
+                    Label("Settings", systemImage: "gearshape")
+                }
+                .accessibilityLabel("Settings")
+            }
+            #else
             ToolbarItem(placement: .bottomBar) {
                 Button {
                     showingSettings = true
@@ -48,20 +69,93 @@ struct WorldClockHomeView: View {
                     searchButton
                 }
             }
+            #endif
         }
         .sheet(isPresented: $showingPicker) {
-            NavigationStack {
-                TimeZonePickerView(store: store)
-            }
-            .presentationDetents([.large])
+            pickerSheet
         }
         .sheet(isPresented: $showingSettings) {
-            NavigationStack {
-                SettingsView(store: store)
+            settingsSheet
+        }
+        .alert("Add to Calendar", isPresented: showingCalendarDraft) {
+            TextField("Title", text: $eventTitle)
+
+            Button("Cancel", role: .cancel) {
+                dismissCalendarDraft()
             }
-            .presentationDetents([.medium, .large])
+
+            Button("Save") {
+                guard let calendarDraft else {
+                    return
+                }
+
+                let title = eventTitle
+                dismissCalendarDraft()
+
+                Task {
+                    await createCalendarEvent(for: calendarDraft.presentation, title: title)
+                }
+            }
+        } message: {
+            if let calendarDraft {
+                Text("Create an event for \(calendarDraft.presentation.formattedTime) in \(calendarDraft.presentation.title).")
+            }
+        }
+        .alert(item: $calendarFeedback) { feedback in
+            Alert(
+                title: Text(feedback.title),
+                message: Text(feedback.message),
+                dismissButton: .default(Text("OK"))
+            )
         }
         .animation(.snappy, value: store.favoriteTimeZoneIDs)
+        .task {
+            guard didApplyScreenshotScenario == false else {
+                return
+            }
+
+            didApplyScreenshotScenario = true
+
+            switch AppStoreScreenshotScenario.current {
+            case .search:
+                showingPicker = true
+            case .settings:
+                showingSettings = true
+            default:
+                break
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var pickerSheet: some View {
+        NavigationStack {
+            TimeZonePickerView(
+                store: store,
+                currentLocationTimeZoneID: currentLocationTimeZoneID,
+                currentLocationCityName: currentLocationCityName,
+                requestCurrentLocation: requestCurrentLocation
+            )
+        }
+        #if os(macOS)
+        .frame(minWidth: 680, minHeight: 520)
+        #endif
+        #if os(iOS)
+        .presentationDetents([.large])
+        #endif
+    }
+
+    @ViewBuilder
+    private var settingsSheet: some View {
+        NavigationStack {
+            SettingsView(store: store)
+        }
+        #if os(macOS)
+        .frame(minWidth: 560, minHeight: 460)
+        #endif
+        #if os(iOS)
+        .presentationDetents([.medium, .large])
+        #endif
     }
 
     private var header: some View {
@@ -92,17 +186,17 @@ struct WorldClockHomeView: View {
             }
 
             Section {
-                ForEach(store.presentations) { presentation in
+                ForEach(store.displayedPresentations) { presentation in
                     clockRow(for: presentation)
                 }
-                .onMove(perform: store.moveTimeZones)
+                .onMove(perform: store.moveDisplayedTimeZones)
             }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color.clear)
 
-        if #available(iOS 18.0, *) {
+        if #available(iOS 18.0, macOS 15.0, *) {
             list.onScrollGeometryChange(for: CGFloat.self, of: { geometry in
                 geometry.contentOffset.y + geometry.contentInsets.top
             }, action: { _, newValue in
@@ -118,7 +212,11 @@ struct WorldClockHomeView: View {
     }
 
     private func clockRow(for presentation: ClockPresentation) -> some View {
-        ClockCardView(presentation: presentation)
+        ClockCardView(
+            presentation: presentation,
+            isCurrentLocation: presentation.timeZoneID == currentLocationTimeZoneID,
+            currentLocationCityName: currentLocationCityName
+        )
             .equatable()
             .contentShape(Rectangle())
             .onTapGesture {
@@ -140,8 +238,8 @@ struct WorldClockHomeView: View {
                 }
             }
             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                Button("Copy", systemImage: "doc.on.doc") {
-                    UIPasteboard.general.string = presentation.copyText
+                Button("Calendar", systemImage: "calendar.badge.plus") {
+                    presentCalendarDraft(for: presentation)
                 }
                 .tint(AppTheme.accent)
 
@@ -154,9 +252,72 @@ struct WorldClockHomeView: View {
                     .tint(.red)
                 }
             }
+            #if os(macOS)
+            .contextMenu {
+                Button("Calendar", systemImage: "calendar.badge.plus") {
+                    presentCalendarDraft(for: presentation)
+                }
+
+                if presentation.isReference == false {
+                    Button("Reference", systemImage: "arrow.up.to.line") {
+                        withAnimation(.snappy) {
+                            store.setReferenceTimeZone(id: presentation.timeZoneID)
+                        }
+                    }
+                }
+
+                if store.hasMultipleFavorites {
+                    Divider()
+
+                    Button("Remove", systemImage: "trash", role: .destructive) {
+                        withAnimation(.snappy) {
+                            store.removeTimeZone(id: presentation.timeZoneID)
+                        }
+                    }
+                }
+            }
+            #endif
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
+    }
+
+    @MainActor
+    private func createCalendarEvent(for presentation: ClockPresentation, title: String) async {
+        do {
+            let message = try await calendarEventStore.createEvent(
+                title: title,
+                for: presentation,
+                referenceDate: store.referenceDate
+            )
+            calendarFeedback = CalendarFeedback(title: "Calendar Event Added", message: message)
+        } catch {
+            calendarFeedback = CalendarFeedback(
+                title: "Couldn’t Add Calendar Event",
+                message: (error as? LocalizedError)?.errorDescription ?? "Something went wrong."
+            )
+        }
+    }
+
+    private func presentCalendarDraft(for presentation: ClockPresentation) {
+        calendarDraft = CalendarDraft(presentation: presentation)
+        eventTitle = calendarEventStore.defaultTitle(for: presentation)
+    }
+
+    private func dismissCalendarDraft() {
+        calendarDraft = nil
+        eventTitle = ""
+    }
+
+    private var showingCalendarDraft: Binding<Bool> {
+        Binding(
+            get: { calendarDraft != nil },
+            set: { isPresented in
+                if isPresented == false {
+                    dismissCalendarDraft()
+                }
+            }
+        )
     }
 
     private var searchButton: some View {
@@ -166,5 +327,22 @@ struct WorldClockHomeView: View {
             Label("Search", systemImage: "magnifyingglass")
         }
         .accessibilityLabel("Search time zones")
+    }
+}
+
+private struct CalendarFeedback: Identifiable {
+    let title: String
+    let message: String
+
+    var id: String {
+        "\(title)|\(message)"
+    }
+}
+
+private struct CalendarDraft: Identifiable {
+    let presentation: ClockPresentation
+
+    var id: String {
+        presentation.id
     }
 }

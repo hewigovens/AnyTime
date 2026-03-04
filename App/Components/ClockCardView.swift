@@ -3,6 +3,8 @@ import AnyTimeCore
 
 struct ClockCardView: View, Equatable {
     let presentation: ClockPresentation
+    let isCurrentLocation: Bool
+    let currentLocationCityName: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -13,13 +15,13 @@ struct ClockCardView: View, Equatable {
                             .font(.system(.title3, design: .rounded).weight(.semibold))
                             .foregroundStyle(.primary)
 
-                        if presentation.isReference {
-                            Text("Reference")
+                        if isCurrentLocation {
+                            Image(systemName: "location.fill")
                                 .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(AppTheme.warm.opacity(0.18), in: Capsule())
-                                .foregroundStyle(AppTheme.warm)
+                                .foregroundStyle(AppTheme.magic)
+                                .padding(8)
+                                .background(AppTheme.magic.opacity(0.18), in: Capsule())
+                                .accessibilityLabel(currentLocationAccessibilityLabel)
                         }
                     }
 
@@ -68,6 +70,14 @@ struct ClockCardView: View, Equatable {
                 )
         }
         .shadow(color: AppTheme.shadow, radius: 10, y: 4)
+    }
+
+    private var currentLocationAccessibilityLabel: String {
+        guard let currentLocationCityName, currentLocationCityName.isEmpty == false else {
+            return "Matches your current location time zone"
+        }
+
+        return "Matches your current location time zone in \(currentLocationCityName)"
     }
 }
 

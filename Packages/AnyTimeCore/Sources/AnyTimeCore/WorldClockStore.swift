@@ -58,6 +58,12 @@ public final class WorldClockStore {
         presentations.first
     }
 
+    public var displayedPresentations: [ClockPresentation] {
+        presentations.filter { presentation in
+            presentation.isReference || presentation.isSameTimeAsReference == false
+        }
+    }
+
     private let persistence: any WorldClockPersisting
     private let currentTimeZoneID: String
     private var configuration: WorldClockConfiguration
@@ -135,6 +141,29 @@ public final class WorldClockStore {
         }
     }
 
+    public func moveDisplayedTimeZones(fromOffsets: IndexSet, toOffset: Int) {
+        let displayedIDs = displayedPresentations.map(\.timeZoneID)
+        var reorderedDisplayedIDs = displayedIDs
+        reorderedDisplayedIDs.move(fromOffsets: fromOffsets, toOffset: toOffset)
+
+        mutateConfiguration { configuration in
+            let displayedIDSet = Set(displayedIDs)
+            let hiddenIDs = configuration.favoriteTimeZoneIDs.filter { identifier in
+                displayedIDSet.contains(identifier) == false
+            }
+            let hiddenIDSet = Set(hiddenIDs)
+            var remainingDisplayedIDs = reorderedDisplayedIDs[...]
+
+            configuration.favoriteTimeZoneIDs = configuration.favoriteTimeZoneIDs.map { identifier in
+                if hiddenIDSet.contains(identifier) {
+                    return identifier
+                }
+
+                return remainingDisplayedIDs.removeFirst()
+            }
+        }
+    }
+
     public func shiftReference(hours: Int) {
         guard hours != 0 else {
             return
@@ -190,6 +219,7 @@ public final class WorldClockStore {
         let abbreviation = descriptor.abbreviation(at: referenceDate)
         let cityName = preferredCityName(for: identifier, descriptor: descriptor)
         let targetOffsetSeconds = timeZone.secondsFromGMT(for: referenceDate)
+        let isSameTimeAsReference = identifier != referenceTimeZoneID && targetOffsetSeconds == referenceOffsetSeconds
         let utcOffsetText = ClockMath.utcOffsetText(seconds: targetOffsetSeconds)
         let comparisonText = identifier == referenceTimeZoneID
             ? "Reference zone"
@@ -237,7 +267,8 @@ public final class WorldClockStore {
             comparisonText: comparisonText,
             dayText: dayText,
             copyText: copyText,
-            isReference: identifier == referenceTimeZoneID
+            isReference: identifier == referenceTimeZoneID,
+            isSameTimeAsReference: isSameTimeAsReference
         )
     }
 
@@ -302,7 +333,6 @@ public final class WorldClockStore {
 
             result[entry.key] = trimmedName
         }
-
         if sanitized.favoriteTimeZoneIDs.isEmpty {
             sanitized = .default(currentTimeZoneID: currentTimeZoneID)
         }
